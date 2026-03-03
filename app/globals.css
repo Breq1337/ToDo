@@ -1,0 +1,86 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Brand greens from To Do Green — primary palette */
+    --primary: 142 76% 36%;
+    --primaryHover: 142 76% 32%;
+    --primarySoft: 142 40% 94%;
+    --primary-foreground: 0 0% 100%;
+    --accent: 142 70% 42%;
+    --accent-foreground: 0 0% 100%;
+    /* Light mode: off-white / warm-light / green-tinted — never pure #fff */
+    --bg: 80 20% 98%;
+    --bg2: 80 15% 96%;
+    --surface: 0 0% 100%;
+    --surface2: 80 20% 97%;
+    --border: 142 15% 88%;
+    --text: 140 15% 12%;
+    --muted: 140 10% 45%;
+    --muted-foreground: 140 8% 38%;
+    --input: 142 15% 90%;
+    --ring: 142 76% 36%;
+  }
+
+  .dark {
+    --primary: 142 70% 45%;
+    --primaryHover: 142 70% 50%;
+    --primarySoft: 142 30% 18%;
+    --primary-foreground: 0 0% 100%;
+    --accent: 142 65% 48%;
+    --accent-foreground: 0 0% 100%;
+    /* Deep green/charcoal — avoid pure black */
+    --bg: 140 18% 8%;
+    --bg2: 140 15% 11%;
+    --surface: 140 16% 12%;
+    --surface2: 140 14% 15%;
+    --border: 142 15% 22%;
+    --text: 80 15% 96%;
+    --muted: 140 10% 65%;
+    --muted-foreground: 140 8% 72%;
+    --input: 140 15% 18%;
+    --ring: 142 70% 45%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html {
+    @apply scroll-smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased transition-colors duration-300;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* Partners marquee: continuous horizontal scroll, never reset. Pause on hover only. */
+.partners-marquee-track {
+  animation: partners-marquee 35s linear infinite;
+}
+.partners-marquee-track:hover {
+  animation-play-state: paused;
+}
+
+@keyframes partners-marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-25%);
+  }
+}
