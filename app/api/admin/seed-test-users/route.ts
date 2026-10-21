@@ -19,12 +19,18 @@ const TEST_ACCOUNTS: { email: string; role: PortalRole; hubId: string | null }[]
 
 function checkSeedSecret(request: Request): boolean {
   const secret = process.env.SEED_SECRET?.trim();
-  if (!secret) return true;
+  if (!secret) return false;
   const header = request.headers.get("X-Seed-Secret")?.trim();
   return header === secret;
 }
 
 export async function POST(request: Request) {
+  if (!process.env.SEED_SECRET?.trim()) {
+    return NextResponse.json(
+      { error: "Seed não configurado. Defina SEED_SECRET." },
+      { status: 503 }
+    );
+  }
   if (!checkSeedSecret(request)) {
     return NextResponse.json(
       { error: "Acesso negado. Envie o header X-Seed-Secret com o valor de SEED_SECRET." },

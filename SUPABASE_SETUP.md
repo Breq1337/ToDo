@@ -31,11 +31,18 @@ Opcionais:
 
 ## 3. Executar a migração SQL
 
-No Supabase Dashboard, abra **SQL Editor** e execute o conteúdo do arquivo:
+No Supabase Dashboard, abra **SQL Editor** e execute, **nesta ordem**, o conteúdo dos arquivos:
 
-`supabase/migrations/20250226000000_initial_schema.sql`
+1. `supabase/migrations/20250226000000_initial_schema.sql`
+2. `supabase/migrations/20261021000000_harden_rls.sql`
 
-Isso cria as tabelas: `allowlist`, `profiles`, `hubs`, `notifications`, `ranking`, `audit_logs`, e as políticas RLS.
+Ou, com a Supabase CLI: `supabase db push --db-url "<connection string>"`.
+
+Isso cria as tabelas: `allowlist`, `profiles`, `hubs`, `notifications`, `ranking`, `audit_logs`, e as políticas RLS. O app acessa o banco só via `service_role` (rotas `/api/*`); o hardening remove as policies de escrita/leitura de cliente que não eram usadas.
+
+> `supabase/legacy/001_initial_schema.sql` é um schema antigo (tabela `users`, trilhas, quizzes) que **não** corresponde ao código atual. Não execute.
+
+As chaves novas do Supabase (`sb_publishable_…` / `sb_secret_…`) funcionam nas mesmas variáveis `NEXT_PUBLIC_SUPABASE_ANON_KEY` / `SUPABASE_SERVICE_ROLE_KEY`.
 
 ---
 
