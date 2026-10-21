@@ -35,6 +35,7 @@ No Supabase Dashboard, abra **SQL Editor** e execute, **nesta ordem**, o conteú
 
 1. `supabase/migrations/20250226000000_initial_schema.sql`
 2. `supabase/migrations/20261021000000_harden_rls.sql`
+3. `supabase/migrations/20261021000001_revoke_handle_new_user.sql`
 
 Ou, com a Supabase CLI: `supabase db push --db-url "<connection string>"`.
 
