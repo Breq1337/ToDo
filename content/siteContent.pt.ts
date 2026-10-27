@@ -137,6 +137,8 @@ export const siteContentPt = {
   common: {
     clientsTitle: "Nossos clientes",
     partnersBlockTitle: "Seja um parceiro To Do Green",
+    partnersPause: "Pausar logos",
+    partnersResume: "Retomar logos",
   },
   tutorial: {
     title: "Bem-vindo ao site To Do Green",

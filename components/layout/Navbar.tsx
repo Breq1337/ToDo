@@ -108,7 +108,7 @@ export function Navbar() {
           <button
             type="button"
             onClick={() => setLocale(locale === "pt-BR" ? "en" : "pt-BR")}
-            className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-surface2 transition-colors"
+            className="flex min-h-11 items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-surface2 transition-colors"
             aria-label={locale === "pt-BR" ? "Switch to English" : "Mudar para português"}
           >
             <Languages className="h-4 w-4" />
@@ -117,7 +117,7 @@ export function Navbar() {
           <button
             type="button"
             onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-            className="rounded-lg p-2 text-muted-foreground hover:text-foreground hover:bg-surface2 transition-colors"
+            className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg p-2 text-muted-foreground hover:text-foreground hover:bg-surface2 transition-colors"
             aria-label={theme === "light" ? "Switch to dark mode" : "Switch to light mode"}
           >
             {theme === "light" ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
@@ -126,7 +126,7 @@ export function Navbar() {
 
         <button
           type="button"
-          className="relative z-10 md:hidden rounded-lg p-2 text-foreground"
+          className="relative z-10 inline-flex min-h-11 min-w-11 items-center justify-center md:hidden rounded-lg p-2 text-foreground"
           onClick={() => setMobileOpen((o) => !o)}
           aria-expanded={mobileOpen}
           aria-label="Toggle menu"
@@ -165,7 +165,7 @@ export function Navbar() {
                   setLocale(locale === "pt-BR" ? "en" : "pt-BR");
                   setMobileOpen(false);
                 }}
-                className="flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-muted-foreground"
+                className="flex min-h-11 items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-muted-foreground"
               >
                 <Languages className="h-4 w-4" />
                 {locale === "pt-BR" ? "English" : "Português"}
@@ -175,7 +175,8 @@ export function Navbar() {
                 onClick={() => {
                   setTheme(theme === "light" ? "dark" : "light");
                 }}
-                className="rounded-lg p-2 text-muted-foreground"
+                className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg p-2 text-muted-foreground"
+                aria-label={theme === "light" ? "Switch to dark mode" : "Switch to light mode"}
               >
                 {theme === "light" ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
               </button>
