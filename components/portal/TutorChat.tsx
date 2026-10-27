@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import { Send, Loader2, Info } from "lucide-react";
 import { useLocale } from "@/components/providers/LocaleProvider";
 import { getPortalContent } from "@/content/i18n";

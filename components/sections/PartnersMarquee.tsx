@@ -7,7 +7,7 @@
  */
 
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import { useLocale } from "@/components/providers/LocaleProvider";
 import { getContent } from "@/content/i18n";
 

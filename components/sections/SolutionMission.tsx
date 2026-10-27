@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import { useLocale } from "@/components/providers/LocaleProvider";
 import { getContent } from "@/content/i18n";
 import { sectionReveal } from "@/components/motion/variants";

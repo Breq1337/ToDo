@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "motion/react";
 import { Sun, Languages, UserCircle } from "lucide-react";
 import { useLocale } from "@/components/providers/LocaleProvider";
 import { getContent } from "@/content/i18n";

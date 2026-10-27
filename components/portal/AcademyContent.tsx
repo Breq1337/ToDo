@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import { useAuthRoleContext } from "@/components/portal/AuthRoleContext";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { useLocale } from "@/components/providers/LocaleProvider";

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import { Menu, X, Sun, Moon, Languages } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useTheme } from "@/components/providers/ThemeProvider";

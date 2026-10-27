@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "motion/react";
 import { LayoutDashboard, GraduationCap, Bell, Sparkles } from "lucide-react";
 import { useLocale } from "@/components/providers/LocaleProvider";
 import { getPortalContent } from "@/content/i18n";
