@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "motion/react";
 import { ChevronDown } from "lucide-react";
 import { useLocale } from "@/components/providers/LocaleProvider";
 import { getPortalContent } from "@/content/i18n";

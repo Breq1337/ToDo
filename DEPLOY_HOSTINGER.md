@@ -77,14 +77,48 @@ npm -v
 
 ### 3.4 Clonar repositório e instalar dependências
 
-Ajuste `SEU_USUARIO/ToDoV2` para o seu repositório.
+Repositório canônico: `Breq1337/ToDo` (o antigo `ToDoV2` foi aposentado). Nele o app fica na raiz; o `cd ToDo` abaixo só vale para servidores montados com o layout antigo.
 
 ```bash
 cd /var/www
 mkdir -p todogreen && cd todogreen
-git clone https://github.com/SEU_USUARIO/ToDoV2.git .
+git clone https://github.com/Breq1337/ToDo.git .
 cd ToDo
 ```
+
+#### Repositório privado: configurar antes de trocar a visibilidade
+
+Com o repositório privado, `git clone`/`git pull` por HTTPS sem credencial deixa de funcionar. Faça um dos caminhos abaixo **e teste**, só depois mude o repositório para privado.
+
+**VPS (deploy key somente leitura):**
+
+```bash
+ssh-keygen -t ed25519 -f ~/.ssh/todogreen_deploy -N "" -C "todogreen-vps"
+cat ~/.ssh/todogreen_deploy.pub
+```
+
+1. GitHub → `Breq1337/ToDo` → Settings → Deploy keys → Add deploy key. Cole a chave pública e **não** marque “Allow write access”.
+2. No VPS, em `~/.ssh/config`:
+
+   ```
+   Host github-todogreen
+     HostName github.com
+     User git
+     IdentityFile ~/.ssh/todogreen_deploy
+     IdentitiesOnly yes
+   ```
+
+3. Aponte o remoto e teste:
+
+   ```bash
+   cd /var/www/todogreen
+   git remote set-url origin git@github-todogreen:Breq1337/ToDo.git
+   git fetch origin
+   ```
+
+**Painel Hostinger (integração GitHub, opção B):** reconecte o GitHub no painel e conceda acesso ao repositório privado `Breq1337/ToDo`. Dispare um deploy de teste.
+
+Com o teste passando: GitHub → Settings → General → Danger Zone → Change visibility → Private.
 
 ### 3.5 Variáveis de ambiente no VPS
 

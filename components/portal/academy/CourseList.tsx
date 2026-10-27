@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import type { AcademyCourse } from "@/content/demoAcademyData";
 import { staggerContainer } from "@/components/motion/variants";
 import { CourseCard } from "./CourseCard";

@@ -139,6 +139,8 @@ export const siteContentEn: SiteContent = {
   common: {
     clientsTitle: "Our clients",
     partnersBlockTitle: "Become a To Do Green partner",
+    partnersPause: "Pause logos",
+    partnersResume: "Resume logos",
   },
   tutorial: {
     title: "Welcome to the To Do Green website",

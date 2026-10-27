@@ -3,13 +3,17 @@
 /**
  * Partners logo marquee — continuous infinite scroll.
  * Does NOT reset on hover: uses CSS keyframes + duplicated content.
- * Optional pause on hover via animation-play-state.
+ * Pauses on hover/focus and via a visible button (WCAG 2.2.2: touch and
+ * keyboard users have no hover). Duplicated strips are hidden from assistive tech.
  */
 
+import { useState } from "react";
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
+import { Pause, Play } from "lucide-react";
 import { useLocale } from "@/components/providers/LocaleProvider";
 import { getContent } from "@/content/i18n";
+import { cn } from "@/lib/utils";
 
 const partnerLogos = [
   { src: "/images/amazon_logo_icon_169612-150x150.jpg", alt: "Amazon" },
@@ -19,9 +23,9 @@ const partnerLogos = [
   { src: "/images/logo_mercado-diferente_hQZ97N-150x150.jpg", alt: "Mercado Diferente" },
 ];
 
-function LogoStrip() {
+function LogoStrip({ duplicate = false }: { duplicate?: boolean }) {
   return (
-    <div className="flex items-center gap-12 shrink-0 px-6">
+    <div className="flex items-center gap-12 shrink-0 px-6" aria-hidden={duplicate || undefined}>
       {partnerLogos.map(({ src, alt }) => (
         <div
           key={src}
@@ -29,7 +33,7 @@ function LogoStrip() {
         >
           <Image
             src={src}
-            alt={alt}
+            alt={duplicate ? "" : alt}
             width={112}
             height={56}
             className="h-10 w-auto object-contain"
@@ -42,7 +46,8 @@ function LogoStrip() {
 
 export function PartnersMarquee() {
   const { locale } = useLocale();
-  const title = getContent(locale).common.partnersBlockTitle;
+  const common = getContent(locale).common;
+  const [paused, setPaused] = useState(false);
 
   return (
     <section className="py-16 lg:py-20 border-y border-border bg-surface2/30 overflow-hidden">
@@ -53,19 +58,30 @@ export function PartnersMarquee() {
           viewport={{ once: true }}
           className="font-display text-2xl sm:text-3xl font-bold text-center text-foreground"
         >
-          {title}
+          {common.partnersBlockTitle}
         </motion.h2>
       </div>
       <div className="relative w-full overflow-hidden">
         <div
-          className="partners-marquee-track flex w-max"
+          className={cn("partners-marquee-track flex w-max", paused && "is-paused")}
           style={{ willChange: "transform" }}
         >
           <LogoStrip />
-          <LogoStrip />
-          <LogoStrip />
-          <LogoStrip />
+          <LogoStrip duplicate />
+          <LogoStrip duplicate />
+          <LogoStrip duplicate />
         </div>
+      </div>
+      <div className="mt-6 flex justify-center">
+        <button
+          type="button"
+          onClick={() => setPaused((p) => !p)}
+          aria-pressed={paused}
+          className="inline-flex min-h-11 items-center gap-2 rounded-full border border-border px-4 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-surface2 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        >
+          {paused ? <Play className="h-4 w-4" aria-hidden /> : <Pause className="h-4 w-4" aria-hidden />}
+          {paused ? common.partnersResume : common.partnersPause}
+        </button>
       </div>
     </section>
   );

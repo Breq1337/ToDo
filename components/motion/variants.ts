@@ -1,5 +1,5 @@
 /**
- * Reusable Framer Motion variants — premium, subtle, 60fps.
+ * Reusable Motion variants — premium, subtle, 60fps.
  * Respect prefers-reduced-motion via reduced variant.
  */
 
@@ -29,7 +29,7 @@ export const sectionReveal = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] },
+    transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] as const },
   },
   reduced: { opacity: 1, y: 0 },
 };

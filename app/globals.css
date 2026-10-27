@@ -57,6 +57,17 @@
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 
+  h1,
+  h2,
+  h3,
+  h4 {
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
@@ -68,11 +79,13 @@
   }
 }
 
-/* Partners marquee: continuous horizontal scroll, never reset. Pause on hover only. */
+/* Partners marquee: continuous horizontal scroll, never reset. Pauses on hover, focus or the pause button. */
 .partners-marquee-track {
   animation: partners-marquee 35s linear infinite;
 }
-.partners-marquee-track:hover {
+.partners-marquee-track:hover,
+.partners-marquee-track:focus-within,
+.partners-marquee-track.is-paused {
   animation-play-state: paused;
 }
 

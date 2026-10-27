@@ -44,7 +44,6 @@ export function createServiceRoleClient(): ReturnType<typeof import("@supabase/s
 
   if (!supabaseUrl || !serviceRoleKey) return null;
 
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
   const { createClient: createSupabaseClient } = require("@supabase/supabase-js") as typeof import("@supabase/supabase-js");
   return createSupabaseClient(supabaseUrl, serviceRoleKey, {
     auth: { persistSession: false },

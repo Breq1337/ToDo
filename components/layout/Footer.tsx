@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import { Mail, MessageCircle, Linkedin, Facebook, Instagram } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useTheme } from "@/components/providers/ThemeProvider";
@@ -126,7 +126,7 @@ export function Footer() {
                 href="https://www.linkedin.com/company/to-do-green"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rounded-lg p-2 text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
+                className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg p-2 text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
                 aria-label="LinkedIn"
               >
                 <Linkedin className="h-5 w-5" />
@@ -135,7 +135,7 @@ export function Footer() {
                 href="https://www.facebook.com/todogreen"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rounded-lg p-2 text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
+                className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg p-2 text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
                 aria-label="Facebook"
               >
                 <Facebook className="h-5 w-5" />
@@ -144,7 +144,7 @@ export function Footer() {
                 href="https://www.instagram.com/todogreen"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rounded-lg p-2 text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
+                className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg p-2 text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
                 aria-label="Instagram"
               >
                 <Instagram className="h-5 w-5" />
