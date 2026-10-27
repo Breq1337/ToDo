@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Image from "next/image";
 import { motion } from "motion/react";
 import { Mail, MessageCircle, Loader2, CheckCircle, AlertCircle } from "lucide-react";
@@ -22,10 +22,17 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>;
 
+function newIdempotencyKey() {
+  if (typeof crypto !== "undefined" && "randomUUID" in crypto) return crypto.randomUUID();
+  return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 12)}`;
+}
+
 export function ContactContent() {
   const { locale } = useLocale();
   const c = getContent(locale).contact;
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  // Same key for every retry of one submission; a new one only after a confirmed success.
+  const idempotencyKey = useRef<string | null>(null);
 
   const {
     register,
@@ -38,15 +45,18 @@ export function ContactContent() {
   });
 
   const onSubmit = async (data: FormData) => {
+    if (status === "loading") return;
     setStatus("loading");
+    idempotencyKey.current ??= newIdempotencyKey();
     try {
       const res = await fetch("/api/contact", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "Idempotency-Key": idempotencyKey.current },
         body: JSON.stringify(data),
       });
       const json = await res.json();
       if (json.success) {
+        idempotencyKey.current = null;
         setStatus("success");
         reset();
       } else {
