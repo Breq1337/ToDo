@@ -22,13 +22,13 @@ function redirectByRole(role: PortalRole): string {
 }
 
 async function doSignInAndSync(
-  t: { notAuthorized: string; profileLoadError: string }
+  t: { notAuthorized: string; loginUnavailable: string }
 ): Promise<{ ok: true; role: PortalRole } | { ok: false; message: string }> {
   let claims;
   try {
     claims = await getClaims();
   } catch {
-    return { ok: false, message: t.profileLoadError };
+    return { ok: false, message: t.loginUnavailable };
   }
   if (!claims) {
     await logout();

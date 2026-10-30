@@ -69,7 +69,7 @@ describe("LoginCard", () => {
 
     submitLogin();
 
-    await waitFor(() => expect(screen.getByRole("alert").textContent).toContain(t.profileLoadError));
+    await waitFor(() => expect(screen.getByRole("alert").textContent).toContain(t.loginUnavailable));
     expect(logout).not.toHaveBeenCalled();
   });
 });

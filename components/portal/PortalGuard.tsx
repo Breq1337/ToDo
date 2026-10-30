@@ -24,18 +24,23 @@ export function PortalGuard({ children }: { children: React.ReactNode }) {
 
   if (error && !isLoginPage) {
     const portal = getPortalContent(locale);
+    const denied = error === "denied";
     return (
       <div className="flex min-h-screen items-center justify-center p-4">
         <div role="alert" className="w-full max-w-md rounded-2xl border border-border bg-surface2/50 p-6">
-          <p className="text-sm text-foreground">{portal.login.profileLoadError}</p>
+          <p className="text-sm text-foreground">
+            {denied ? portal.login.notAuthorized : portal.login.profileLoadError}
+          </p>
           <div className="mt-4 flex flex-wrap gap-2">
-            <button
-              type="button"
-              onClick={retry}
-              className="rounded-lg border border-primary bg-primary/10 px-4 py-2 text-sm font-medium text-primary transition-colors hover:bg-primary/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-            >
-              {portal.login.tryAgain}
-            </button>
+            {!denied && (
+              <button
+                type="button"
+                onClick={retry}
+                className="rounded-lg border border-primary bg-primary/10 px-4 py-2 text-sm font-medium text-primary transition-colors hover:bg-primary/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+              >
+                {portal.login.tryAgain}
+              </button>
+            )}
             <button
               type="button"
               onClick={() => void logout()}

@@ -17,6 +17,9 @@ export interface ProfileWithRole {
 
 const CORP_DOMAIN = "todogreen.com.br";
 
+/** Identity could not be decided (Auth or database down). Access stays denied, but it is not a refusal. */
+export class AuthUnavailableError extends Error {}
+
 /**
  * Get the current user, validated by Supabase Auth. getSession only decodes the cookie, so it must
  * not be used to decide identity here: the service role client bypasses RLS.
@@ -24,7 +27,11 @@ const CORP_DOMAIN = "todogreen.com.br";
 export async function getVerifiedUser() {
   const supabase = await createClient();
   const { data: { user }, error } = await supabase.auth.getUser();
-  if (error) return null;
+  if (error) {
+    const status = error.status ?? 0;
+    if (status === 0 || status >= 500) throw new AuthUnavailableError(error.message);
+    return null;
+  }
   return user;
 }
 
@@ -35,7 +42,7 @@ export async function getVerifiedUser() {
  */
 export async function getProfileWithRole(userId: string, email: string): Promise<ProfileWithRole | null> {
   const db = createServiceRoleClient();
-  if (!db) return null;
+  if (!db) throw new AuthUnavailableError("Service role client not configured");
 
   const emailLower = email.toLowerCase().trim();
 
@@ -46,7 +53,7 @@ export async function getProfileWithRole(userId: string, email: string): Promise
     .maybeSingle();
 
   // Without the allowlist we cannot tell whether this account was revoked.
-  if (allowlistError) return null;
+  if (allowlistError) throw new AuthUnavailableError(allowlistError.message);
 
   const allowlistRow = allowlistData as { active?: boolean; role_default?: string; hub_id?: string | null } | null;
   if (allowlistRow?.active === false) return null;

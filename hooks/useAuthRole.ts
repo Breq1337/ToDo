@@ -9,11 +9,11 @@ export interface AuthRoleState {
   role: PortalRole;
   hubId: string | null;
   loading: boolean;
-  error: string | null;
+  error: AuthRoleError | null;
   tokenRefreshed: boolean;
 }
 
-const PROFILE_UNAVAILABLE = "profile_unavailable";
+export type AuthRoleError = "denied" | "unavailable";
 
 /**
  * Single source of truth for portal auth + role from Supabase session and profiles (via /api/auth/me).
@@ -23,31 +23,31 @@ export function useAuthRole(): AuthRoleState & { refreshRole: () => Promise<void
   const [userId, setUserId] = useState<string | null>(null);
   const [claims, setClaims] = useState<UserClaims | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<AuthRoleError | null>(null);
   const [tokenRefreshed, setTokenRefreshed] = useState(false);
   const [attempt, setAttempt] = useState(0);
   const currentUserId = useRef<string | null>(null);
   const claimsLoaded = useRef(false);
 
-  // With claims already loaded a failed refresh is transient: keep the portal open with what we have.
-  const reportFailure = useCallback(() => {
-    if (currentUserId.current && !claimsLoaded.current) setError(PROFILE_UNAVAILABLE);
+  // With claims already loaded an outage is transient: keep the portal open with what we have.
+  const reportUnavailable = useCallback(() => {
+    if (currentUserId.current && !claimsLoaded.current) setError("unavailable");
   }, []);
 
   const applyClaims = useCallback((c: UserClaims | null) => {
-    if (!c) throw new Error(PROFILE_UNAVAILABLE);
-    claimsLoaded.current = true;
+    if (!currentUserId.current) return;
+    claimsLoaded.current = c !== null;
     setClaims(c);
-    setError(null);
+    setError(c ? null : "denied");
   }, []);
 
   const refreshRole = useCallback(async () => {
     try {
       applyClaims(await getClaims());
     } catch {
-      reportFailure();
+      reportUnavailable();
     }
-  }, [applyClaims, reportFailure]);
+  }, [applyClaims, reportUnavailable]);
 
   const retry = useCallback(() => {
     setError(null);
@@ -108,7 +108,7 @@ export function useAuthRole(): AuthRoleState & { refreshRole: () => Promise<void
         setTokenRefreshed(true);
       })
       .catch(() => {
-        if (!cancelled) reportFailure();
+        if (!cancelled) reportUnavailable();
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -117,7 +117,7 @@ export function useAuthRole(): AuthRoleState & { refreshRole: () => Promise<void
     return () => {
       cancelled = true;
     };
-  }, [userId, attempt, applyClaims, reportFailure]);
+  }, [userId, attempt, applyClaims, reportUnavailable]);
 
   const role = claims?.role ?? "EMPLOYEE";
   const hubId = claims?.hubId ?? null;

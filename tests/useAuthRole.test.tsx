@@ -37,8 +37,8 @@ async function emitHoldingLock(event: string) {
   await Promise.race([emitted, timeout]);
 }
 
-function mockMe(ok: boolean, body: unknown = { role: "ADMIN", hubId: null }) {
-  const fetchMock = vi.fn(async () => ({ ok, json: async () => body }));
+function mockMe(ok: boolean, status = ok ? 200 : 503) {
+  const fetchMock = vi.fn(async () => ({ ok, status, json: async () => ({ role: "ADMIN", hubId: null }) }));
   vi.stubGlobal("fetch", fetchMock);
   return fetchMock;
 }
@@ -70,7 +70,7 @@ describe("useAuthRole", () => {
   });
 
   it("test_profile_failure_shows_recoverable_error", async () => {
-    mockMe(false, { error: "Não autorizado." });
+    mockMe(false);
     const { result } = renderHook(() => useAuthRole());
 
     await act(async () => {
@@ -78,7 +78,7 @@ describe("useAuthRole", () => {
     });
 
     await waitFor(() => expect(result.current.loading).toBe(false));
-    expect(result.current.error).toBeTruthy();
+    expect(result.current.error).toBe("unavailable");
 
     mockMe(true);
     await act(async () => {
@@ -181,6 +181,36 @@ describe("useAuthRole", () => {
     });
 
     expect(result.current.error).toBeNull();
+  });
+
+  it("reports a denied account", async () => {
+    mockMe(false, 401);
+    const { result } = renderHook(() => useAuthRole());
+
+    await act(async () => {
+      await emitHoldingLock("SIGNED_IN");
+    });
+
+    await waitFor(() => expect(result.current.error).toBe("denied"));
+    expect(result.current.loading).toBe(false);
+  });
+
+  it("closes the portal when access is revoked after loading", async () => {
+    mockMe(true);
+    const { result } = renderHook(() => useAuthRole());
+
+    await act(async () => {
+      await emitHoldingLock("SIGNED_IN");
+    });
+    await waitFor(() => expect(result.current.role).toBe("ADMIN"));
+
+    mockMe(false, 401);
+    await act(async () => {
+      await result.current.refreshRole();
+    });
+
+    expect(result.current.error).toBe("denied");
+    expect(result.current.role).toBe("EMPLOYEE");
   });
 
   it("clears the user on sign out", async () => {

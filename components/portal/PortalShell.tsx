@@ -22,9 +22,8 @@ import {
 import { useLocale } from "@/components/providers/LocaleProvider";
 import { useTheme } from "@/components/providers/ThemeProvider";
 import { getPortalContent } from "@/content/i18n";
-import { createClient } from "@/lib/supabase/client";
 import { canAccess, type RouteGroup } from "@/lib/rbac";
-import type { PortalRole } from "@/lib/authClient";
+import { logout, type PortalRole } from "@/lib/authClient";
 import { cn } from "@/lib/utils";
 
 const navItems: { href: string; icon: typeof LayoutDashboard; key: "dashboard" | "academy" | "tutor" | "ranking" | "profile" | "messages" | "quadroAvisos" | "rhPanel" | "manager" | "admin"; routeGroup?: RouteGroup }[] = [
@@ -74,8 +73,7 @@ export function PortalShell({
   });
 
   const handleLogout = async () => {
-    const supabase = createClient();
-    await supabase.auth.signOut();
+    await logout();
     router.push("/portal/login");
     router.refresh();
   };

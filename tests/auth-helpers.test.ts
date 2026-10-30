@@ -10,7 +10,7 @@ vi.mock("@/lib/supabase/server", () => ({
   createServiceRoleClient: () => db,
 }));
 
-import { getAuthUserWithRole } from "@/lib/supabase/auth-helpers";
+import { AuthUnavailableError, getAuthUserWithRole } from "@/lib/supabase/auth-helpers";
 import { GET as authMe } from "@/app/api/auth/me/route";
 
 const adminUser = { id: "user-1", email: "pessoa@example.com" };
@@ -28,7 +28,7 @@ beforeEach(() => {
 describe("getAuthUserWithRole", () => {
   it("test_forged_cookie_returns_401", async () => {
     sessionFor(adminUser);
-    getUser.mockResolvedValue({ data: { user: null }, error: new Error("invalid JWT") });
+    getUser.mockResolvedValue({ data: { user: null }, error: Object.assign(new Error("invalid JWT"), { status: 403 }) });
 
     const res = await authMe();
 
@@ -62,12 +62,25 @@ describe("getAuthUserWithRole", () => {
     expect(db.upserts).toHaveLength(1);
   });
 
-  it("denies a corporate account when the allowlist cannot be read", async () => {
+  it("fails closed and reports unavailability when the allowlist cannot be read", async () => {
     getUser.mockResolvedValue({ data: { user: corporateUser }, error: null });
     db = createFakeDb({ allowlist: { data: null, error: new Error("db down") } });
 
-    await expect(getAuthUserWithRole()).resolves.toBeNull();
+    await expect(getAuthUserWithRole()).rejects.toBeInstanceOf(AuthUnavailableError);
     expect(db.upserts).toEqual([]);
+    expect((await authMe()).status).toBe(503);
+  });
+
+  it("reports unavailability when Supabase Auth cannot be reached", async () => {
+    getUser.mockResolvedValue({ data: { user: null }, error: Object.assign(new Error("fetch failed"), { status: 0 }) });
+
+    expect((await authMe()).status).toBe(503);
+  });
+
+  it("treats a missing session as anonymous", async () => {
+    getUser.mockResolvedValue({ data: { user: null }, error: Object.assign(new Error("no session"), { status: 400 }) });
+
+    expect((await authMe()).status).toBe(401);
   });
 
   it("denies an outside account that is not on the allowlist", async () => {

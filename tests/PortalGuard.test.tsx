@@ -43,7 +43,7 @@ afterEach(cleanup);
 
 describe("PortalGuard", () => {
   it("test_profile_failure_shows_recoverable_error", () => {
-    authState = { ...baseState, error: "profile_unavailable" };
+    authState = { ...baseState, error: "unavailable" };
 
     render(<PortalGuard>conteúdo</PortalGuard>);
 
@@ -56,6 +56,16 @@ describe("PortalGuard", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "Sair" }));
     expect(logout).toHaveBeenCalledOnce();
+  });
+
+  it("explains a denied account and offers only sign out", () => {
+    authState = { ...baseState, error: "denied" };
+
+    render(<PortalGuard>conteúdo</PortalGuard>);
+
+    expect(screen.getByRole("alert").textContent).toContain("permissão");
+    expect(screen.queryByRole("button", { name: "Tentar novamente" })).toBeNull();
+    expect(screen.getByRole("button", { name: "Sair" })).toBeTruthy();
   });
 
   it("renders the portal for a loaded session", () => {

@@ -43,6 +43,7 @@ export const portalI18nPt = {
     syncing: "Configurando sua sessão…",
     profileLoadError: "Não foi possível confirmar seu acesso ao portal. Tente novamente ou saia e entre com outra conta.",
     tryAgain: "Tentar novamente",
+    loginUnavailable: "Não foi possível confirmar seu acesso agora. Tente entrar novamente em instantes.",
     supabaseNotConfigured: "Configure NEXT_PUBLIC_SUPABASE_URL e NEXT_PUBLIC_SUPABASE_ANON_KEY no painel da sua hospedagem (e SUPABASE_SERVICE_ROLE_KEY em Runtime). Em seguida, dispare um novo deploy. Em desenvolvimento, use o .env.local. Veja SUPABASE_SETUP.md.",
   },
   roleGate: {
