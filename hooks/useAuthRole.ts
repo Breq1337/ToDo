@@ -13,7 +13,7 @@ export interface AuthRoleState {
   tokenRefreshed: boolean;
 }
 
-export type AuthRoleError = "denied" | "unavailable";
+export type AuthRoleError = "denied" | "unavailable" | "expired";
 
 /**
  * Single source of truth for portal auth + role from Supabase session and profiles (via /api/auth/me).
@@ -28,32 +28,29 @@ export function useAuthRole(): AuthRoleState & { refreshRole: () => Promise<void
   const [attempt, setAttempt] = useState(0);
   const currentUserId = useRef<string | null>(null);
   const claimsLoaded = useRef(false);
+  const latestRequest = useRef(0);
 
-  const handleClaimsFailure = useCallback((e: unknown) => {
-    if (e instanceof SessionExpiredError) {
-      void logout();
-      return;
-    }
-    // With claims already loaded an outage is transient: keep the portal open with what we have.
-    if (currentUserId.current && !claimsLoaded.current) setError("unavailable");
-  }, []);
-
-  const applyClaims = useCallback((c: UserClaims | null) => {
-    if (!currentUserId.current) return;
-    claimsLoaded.current = c !== null;
-    setClaims(c);
-    setError(c ? null : "denied");
-  }, []);
-
+  // Only the latest request may change state, so a late response cannot undo a newer one.
   const refreshRole = useCallback(async () => {
-    const requestedFor = currentUserId.current;
+    const request = ++latestRequest.current;
     try {
       const c = await getClaims();
-      if (requestedFor === currentUserId.current) applyClaims(c);
+      if (request !== latestRequest.current) return;
+      claimsLoaded.current = c !== null;
+      setClaims(c);
+      setError(c ? null : "denied");
+      setTokenRefreshed(c !== null);
     } catch (e) {
-      if (requestedFor === currentUserId.current) handleClaimsFailure(e);
+      if (request !== latestRequest.current) return;
+      if (e instanceof SessionExpiredError) {
+        setError("expired");
+        await logout("local");
+      } else if (!claimsLoaded.current) {
+        // With claims already loaded an outage is transient: keep the portal open.
+        setError("unavailable");
+      }
     }
-  }, [applyClaims, handleClaimsFailure]);
+  }, []);
 
   const retry = useCallback(() => {
     setError(null);
@@ -68,6 +65,7 @@ export function useAuthRole(): AuthRoleState & { refreshRole: () => Promise<void
     // auth call here deadlocks signIn. Claims are loaded by the effect below.
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (!session?.user) {
+        latestRequest.current += 1;
         currentUserId.current = null;
         claimsLoaded.current = false;
         setUserId(null);
@@ -107,23 +105,14 @@ export function useAuthRole(): AuthRoleState & { refreshRole: () => Promise<void
     if (!userId) return;
     let cancelled = false;
 
-    getClaims()
-      .then((c) => {
-        if (cancelled) return;
-        applyClaims(c);
-        setTokenRefreshed(true);
-      })
-      .catch((e) => {
-        if (!cancelled) handleClaimsFailure(e);
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
+    void refreshRole().finally(() => {
+      if (!cancelled) setLoading(false);
+    });
 
     return () => {
       cancelled = true;
     };
-  }, [userId, attempt, applyClaims, handleClaimsFailure]);
+  }, [userId, attempt, refreshRole]);
 
   const role = claims?.role ?? "EMPLOYEE";
   const hubId = claims?.hubId ?? null;

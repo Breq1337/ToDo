@@ -10,10 +10,10 @@ import { AuthUnavailableError, getProfileWithRole, getVerifiedUser } from "@/lib
 export async function GET() {
   try {
     const user = await getVerifiedUser();
-    if (!user?.id || !user.email) {
+    if (!user?.id) {
       return NextResponse.json({ error: "Não autorizado." }, { status: 401 });
     }
-    const profile = await getProfileWithRole(user.id, user.email);
+    const profile = user.email ? await getProfileWithRole(user.id, user.email) : null;
     if (!profile) {
       return NextResponse.json({ error: "Acesso negado." }, { status: 403 });
     }

@@ -85,6 +85,12 @@ describe("getAuthUserWithRole", () => {
     expect((await authMe()).status).toBe(503);
   });
 
+  it("answers 403 for a valid session without an email", async () => {
+    getUser.mockResolvedValue({ data: { user: { id: "user-3" } }, error: null });
+
+    expect((await authMe()).status).toBe(403);
+  });
+
   it("answers 403 for a blocked account with a valid session", async () => {
     getUser.mockResolvedValue({ data: { user: corporateUser }, error: null });
     db = createFakeDb({

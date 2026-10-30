@@ -18,7 +18,7 @@ export function PortalGuard({ children }: { children: React.ReactNode }) {
 
   const isLoginPage = pathname === "/portal/login";
 
-  if (loading && !isLoginPage) {
+  if ((loading || error === "expired") && !isLoginPage) {
     return <PortalAuthSkeleton />;
   }
 
@@ -43,10 +43,7 @@ export function PortalGuard({ children }: { children: React.ReactNode }) {
             )}
             <button
               type="button"
-              onClick={async () => {
-                await logout();
-                router.replace("/portal/login");
-              }}
+              onClick={() => void logout()}
               className="rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-surface2 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
             >
               {portal.nav.logout}

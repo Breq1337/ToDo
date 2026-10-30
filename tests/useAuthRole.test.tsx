@@ -222,8 +222,37 @@ describe("useAuthRole", () => {
       await emitHoldingLock("SIGNED_IN");
     });
 
-    await waitFor(() => expect(auth.signOut).toHaveBeenCalledOnce());
+    await waitFor(() => expect(auth.signOut).toHaveBeenCalledWith({ scope: "local" }));
+    await waitFor(() => expect(result.current.error).toBe("expired"));
+  });
+
+  it("ignores an older response that arrives after a newer one", async () => {
+    mockMe(true);
+    const { result } = renderHook(() => useAuthRole());
+
+    await act(async () => {
+      await emitHoldingLock("SIGNED_IN");
+    });
+    await waitFor(() => expect(result.current.role).toBe("ADMIN"));
+
+    let finishOlder: (value: unknown) => void = () => {};
+    vi.stubGlobal("fetch", vi.fn(() => new Promise((resolve) => { finishOlder = resolve; })));
+    let older: Promise<void> = Promise.resolve();
+    await act(async () => {
+      older = result.current.refreshRole();
+    });
+
+    mockMe(true);
+    await act(async () => {
+      await result.current.refreshRole();
+    });
+    await act(async () => {
+      finishOlder({ ok: false, status: 403 });
+      await older;
+    });
+
     expect(result.current.error).toBeNull();
+    expect(result.current.role).toBe("ADMIN");
   });
 
   it("ignores a stale denial that arrives after another user signed in", async () => {

@@ -35,7 +35,13 @@ export function RoleGate({ children }: { children: React.ReactNode }) {
         router.replace("/portal/login");
         return;
       }
-      const c = await getClaims().catch(() => null);
+      let c;
+      try {
+        c = await getClaims();
+      } catch {
+        setState("denied");
+        return;
+      }
       if (!c) {
         setState("allowed");
         return;

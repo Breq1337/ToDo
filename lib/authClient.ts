@@ -57,13 +57,18 @@ export async function loginWithEmailPassword(
   };
 }
 
-export async function logout(): Promise<void> {
-  const supabase = createClient();
-  const { error } = await supabase.auth.signOut();
-  if (!error) return;
+/**
+ * Never rejects. If signOut fails the session is dropped here and the page reloads at the login,
+ * since no SIGNED_OUT event fires to reset the client state.
+ */
+export async function logout(scope?: "local"): Promise<void> {
+  try {
+    const { error } = await createClient().auth.signOut(scope ? { scope } : undefined);
+    if (!error) return;
+  } catch {
+    // Handled below, same as a reported error.
+  }
 
-  // signOut keeps the session when the server cannot be reached, so drop it here. No SIGNED_OUT
-  // event fires in this case: callers must navigate on their own.
   document.cookie
     .split("; ")
     .map((cookie) => cookie.split("=")[0])
@@ -71,6 +76,7 @@ export async function logout(): Promise<void> {
     .forEach((name) => {
       document.cookie = `${name}=; Max-Age=0; path=/`;
     });
+  window.location.assign("/portal/login");
 }
 
 /**

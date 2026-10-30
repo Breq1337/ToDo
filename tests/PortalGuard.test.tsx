@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const { replace, retry, logout } = vi.hoisted(() => ({
@@ -42,7 +42,7 @@ beforeEach(() => {
 afterEach(cleanup);
 
 describe("PortalGuard", () => {
-  it("test_profile_failure_shows_recoverable_error", async () => {
+  it("test_profile_failure_shows_recoverable_error", () => {
     authState = { ...baseState, error: "unavailable" };
 
     render(<PortalGuard>conteúdo</PortalGuard>);
@@ -56,7 +56,15 @@ describe("PortalGuard", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "Sair" }));
     expect(logout).toHaveBeenCalledOnce();
-    await waitFor(() => expect(replace).toHaveBeenCalledWith("/portal/login"));
+  });
+
+  it("keeps the skeleton while an expired session signs out", () => {
+    authState = { ...baseState, error: "expired" };
+
+    render(<PortalGuard>conteúdo</PortalGuard>);
+
+    expect(screen.getByText("skeleton")).toBeTruthy();
+    expect(screen.queryByText("conteúdo")).toBeNull();
   });
 
   it("explains a denied account and offers only sign out", () => {

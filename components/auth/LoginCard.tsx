@@ -10,6 +10,7 @@ import {
   getClaims,
   getAuthErrorMessage,
   logout,
+  SessionExpiredError,
   type PortalRole,
 } from "@/lib/authClient";
 import { isSupabaseConfigured } from "@/lib/supabase/client";
@@ -27,11 +28,12 @@ async function doSignInAndSync(
   let claims;
   try {
     claims = await getClaims();
-  } catch {
-    return { ok: false, message: t.loginUnavailable };
+  } catch (e) {
+    if (!(e instanceof SessionExpiredError)) return { ok: false, message: t.loginUnavailable };
+    claims = null;
   }
   if (!claims) {
-    await logout();
+    await logout("local");
     return { ok: false, message: t.notAuthorized };
   }
   return { ok: true, role: claims.role };

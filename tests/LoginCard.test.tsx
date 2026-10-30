@@ -2,7 +2,8 @@
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-const { push, refresh, getClaims, logout, loginWithEmailPassword } = vi.hoisted(() => ({
+const { SessionExpiredError, push, refresh, getClaims, logout, loginWithEmailPassword } = vi.hoisted(() => ({
+  SessionExpiredError: class extends Error {},
   push: vi.fn(),
   refresh: vi.fn(),
   getClaims: vi.fn(),
@@ -14,6 +15,7 @@ vi.mock("next/navigation", () => ({ useRouter: () => ({ push, refresh }) }));
 vi.mock("@/components/providers/LocaleProvider", () => ({ useLocale: () => ({ locale: "pt-BR" }) }));
 vi.mock("@/lib/supabase/client", () => ({ isSupabaseConfigured: () => true }));
 vi.mock("@/lib/authClient", () => ({
+  SessionExpiredError,
   getClaims,
   logout,
   loginWithEmailPassword,
@@ -60,8 +62,17 @@ describe("LoginCard", () => {
     submitLogin();
 
     await waitFor(() => expect(screen.getByRole("alert").textContent).toContain(t.notAuthorized));
-    expect(logout).toHaveBeenCalledOnce();
+    expect(logout).toHaveBeenCalledWith("local");
     expect(push).not.toHaveBeenCalled();
+  });
+
+  it("treats a rejected session as denied", async () => {
+    getClaims.mockRejectedValue(new SessionExpiredError());
+
+    submitLogin();
+
+    await waitFor(() => expect(screen.getByRole("alert").textContent).toContain(t.notAuthorized));
+    expect(logout).toHaveBeenCalledWith("local");
   });
 
   it("shows a readable message when the claims lookup fails", async () => {
