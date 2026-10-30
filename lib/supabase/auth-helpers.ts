@@ -18,12 +18,14 @@ export interface ProfileWithRole {
 const CORP_DOMAIN = "todogreen.com.br";
 
 /**
- * Get current session (from cookies). Returns null if not authenticated or Supabase not configured.
+ * Get the current user, validated by Supabase Auth. getSession only decodes the cookie, so it must
+ * not be used to decide identity here: the service role client bypasses RLS.
  */
-export async function getSession() {
+export async function getVerifiedUser() {
   const supabase = await createClient();
-  const { data: { session } } = await supabase.auth.getSession();
-  return session;
+  const { data: { user }, error } = await supabase.auth.getUser();
+  if (error) return null;
+  return user;
 }
 
 /**
@@ -37,13 +39,18 @@ export async function getProfileWithRole(userId: string, email: string): Promise
 
   const emailLower = email.toLowerCase().trim();
 
-  const { data: allowlistData } = await db
+  const { data: allowlistData, error: allowlistError } = await db
     .from("allowlist")
     .select("active, role_default, hub_id")
     .eq("email", emailLower)
-    .single();
+    .maybeSingle();
+
+  // Without the allowlist we cannot tell whether this account was revoked.
+  if (allowlistError) return null;
 
   const allowlistRow = allowlistData as { active?: boolean; role_default?: string; hub_id?: string | null } | null;
+  if (allowlistRow?.active === false) return null;
+
   let role: PortalRole = "EMPLOYEE";
   let hubId: string | null = null;
   let allowed = false;
@@ -89,14 +96,14 @@ export async function getProfileWithRole(userId: string, email: string): Promise
 }
 
 /**
- * Get uid + role for API routes. Reads session from cookie then profile.
- * Returns null if not authenticated or not allowed (not in allowlist / corp domain).
+ * Get uid + role for API routes. Validates the user with Supabase Auth, then reads the profile.
+ * Returns null if not authenticated or not allowed (revoked, not in allowlist / corp domain).
  */
 export async function getAuthUserWithRole(): Promise<{ uid: string; email: string; role: PortalRole; hubId: string | null } | null> {
-  const session = await getSession();
-  if (!session?.user?.id || !session.user.email) return null;
+  const user = await getVerifiedUser();
+  if (!user?.id || !user.email) return null;
 
-  const profile = await getProfileWithRole(session.user.id, session.user.email);
+  const profile = await getProfileWithRole(user.id, user.email);
   if (!profile) return null;
 
   return {
