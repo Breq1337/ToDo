@@ -16,6 +16,7 @@ const auth = {
     await lock;
     return { data: { session } };
   }),
+  signOut: vi.fn(async () => ({ error: null })),
   onAuthStateChange: vi.fn((callback: Listener) => {
     listener = callback;
     return { data: { subscription: { unsubscribe: vi.fn() } } };
@@ -184,7 +185,7 @@ describe("useAuthRole", () => {
   });
 
   it("reports a denied account", async () => {
-    mockMe(false, 401);
+    mockMe(false, 403);
     const { result } = renderHook(() => useAuthRole());
 
     await act(async () => {
@@ -204,13 +205,57 @@ describe("useAuthRole", () => {
     });
     await waitFor(() => expect(result.current.role).toBe("ADMIN"));
 
-    mockMe(false, 401);
+    mockMe(false, 403);
     await act(async () => {
       await result.current.refreshRole();
     });
 
     expect(result.current.error).toBe("denied");
     expect(result.current.role).toBe("EMPLOYEE");
+  });
+
+  it("signs out instead of showing a denial when the session expired", async () => {
+    mockMe(false, 401);
+    const { result } = renderHook(() => useAuthRole());
+
+    await act(async () => {
+      await emitHoldingLock("SIGNED_IN");
+    });
+
+    await waitFor(() => expect(auth.signOut).toHaveBeenCalledOnce());
+    expect(result.current.error).toBeNull();
+  });
+
+  it("ignores a stale denial that arrives after another user signed in", async () => {
+    mockMe(true);
+    const { result } = renderHook(() => useAuthRole());
+
+    await act(async () => {
+      await emitHoldingLock("SIGNED_IN");
+    });
+    await waitFor(() => expect(result.current.role).toBe("ADMIN"));
+
+    let finishRefresh: (value: unknown) => void = () => {};
+    vi.stubGlobal("fetch", vi.fn(() => new Promise((resolve) => { finishRefresh = resolve; })));
+    let pending: Promise<void> = Promise.resolve();
+    await act(async () => {
+      pending = result.current.refreshRole();
+    });
+
+    mockMe(true);
+    const nextSession = { ...session, user: { ...session.user, id: "u2" } };
+    await act(async () => {
+      await listener("SIGNED_OUT", null);
+      await listener("SIGNED_IN", nextSession);
+    });
+    await waitFor(() => expect(result.current.role).toBe("ADMIN"));
+
+    await act(async () => {
+      finishRefresh({ ok: false, status: 403 });
+      await pending;
+    });
+
+    expect(result.current.error).toBeNull();
   });
 
   it("clears the user on sign out", async () => {

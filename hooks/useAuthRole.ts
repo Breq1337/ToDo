@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { getClaims, type PortalRole, type UserClaims } from "@/lib/authClient";
+import { getClaims, logout, SessionExpiredError, type PortalRole, type UserClaims } from "@/lib/authClient";
 
 export interface AuthRoleState {
   user: { email: string; displayName: string } | null;
@@ -29,8 +29,12 @@ export function useAuthRole(): AuthRoleState & { refreshRole: () => Promise<void
   const currentUserId = useRef<string | null>(null);
   const claimsLoaded = useRef(false);
 
-  // With claims already loaded an outage is transient: keep the portal open with what we have.
-  const reportUnavailable = useCallback(() => {
+  const handleClaimsFailure = useCallback((e: unknown) => {
+    if (e instanceof SessionExpiredError) {
+      void logout();
+      return;
+    }
+    // With claims already loaded an outage is transient: keep the portal open with what we have.
     if (currentUserId.current && !claimsLoaded.current) setError("unavailable");
   }, []);
 
@@ -42,12 +46,14 @@ export function useAuthRole(): AuthRoleState & { refreshRole: () => Promise<void
   }, []);
 
   const refreshRole = useCallback(async () => {
+    const requestedFor = currentUserId.current;
     try {
-      applyClaims(await getClaims());
-    } catch {
-      reportUnavailable();
+      const c = await getClaims();
+      if (requestedFor === currentUserId.current) applyClaims(c);
+    } catch (e) {
+      if (requestedFor === currentUserId.current) handleClaimsFailure(e);
     }
-  }, [applyClaims, reportUnavailable]);
+  }, [applyClaims, handleClaimsFailure]);
 
   const retry = useCallback(() => {
     setError(null);
@@ -107,8 +113,8 @@ export function useAuthRole(): AuthRoleState & { refreshRole: () => Promise<void
         applyClaims(c);
         setTokenRefreshed(true);
       })
-      .catch(() => {
-        if (!cancelled) reportUnavailable();
+      .catch((e) => {
+        if (!cancelled) handleClaimsFailure(e);
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -117,7 +123,7 @@ export function useAuthRole(): AuthRoleState & { refreshRole: () => Promise<void
     return () => {
       cancelled = true;
     };
-  }, [userId, attempt, applyClaims, reportUnavailable]);
+  }, [userId, attempt, applyClaims, handleClaimsFailure]);
 
   const role = claims?.role ?? "EMPLOYEE";
   const hubId = claims?.hubId ?? null;

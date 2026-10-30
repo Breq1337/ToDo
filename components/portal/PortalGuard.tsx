@@ -43,7 +43,10 @@ export function PortalGuard({ children }: { children: React.ReactNode }) {
             )}
             <button
               type="button"
-              onClick={() => void logout()}
+              onClick={async () => {
+                await logout();
+                router.replace("/portal/login");
+              }}
               className="rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-surface2 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
             >
               {portal.nav.logout}

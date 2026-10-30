@@ -29,7 +29,9 @@ export async function getVerifiedUser() {
   const { data: { user }, error } = await supabase.auth.getUser();
   if (error) {
     const status = error.status ?? 0;
-    if (status === 0 || status >= 500) throw new AuthUnavailableError(error.message);
+    if (status === 0 || status === 408 || status === 429 || status >= 500) {
+      throw new AuthUnavailableError(error.message);
+    }
     return null;
   }
   return user;
@@ -104,19 +106,26 @@ export async function getProfileWithRole(userId: string, email: string): Promise
 
 /**
  * Get uid + role for API routes. Validates the user with Supabase Auth, then reads the profile.
- * Returns null if not authenticated or not allowed (revoked, not in allowlist / corp domain).
+ * Returns null if not authenticated, not allowed (revoked, not in allowlist / corp domain) or if
+ * that cannot be determined right now: handlers answer 401/403 and access stays closed.
  */
 export async function getAuthUserWithRole(): Promise<{ uid: string; email: string; role: PortalRole; hubId: string | null } | null> {
-  const user = await getVerifiedUser();
-  if (!user?.id || !user.email) return null;
+  try {
+    const user = await getVerifiedUser();
+    if (!user?.id || !user.email) return null;
 
-  const profile = await getProfileWithRole(user.id, user.email);
-  if (!profile) return null;
+    const profile = await getProfileWithRole(user.id, user.email);
+    if (!profile) return null;
 
-  return {
-    uid: profile.id,
-    email: profile.email,
-    role: profile.role,
-    hubId: profile.hubId,
-  };
+    return {
+      uid: profile.id,
+      email: profile.email,
+      role: profile.role,
+      hubId: profile.hubId,
+    };
+  } catch (e) {
+    if (!(e instanceof AuthUnavailableError)) throw e;
+    console.error("[auth]", e);
+    return null;
+  }
 }

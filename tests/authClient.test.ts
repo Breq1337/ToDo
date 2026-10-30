@@ -4,7 +4,7 @@ const { signOut } = vi.hoisted(() => ({ signOut: vi.fn() }));
 
 vi.mock("@/lib/supabase/client", () => ({ createClient: () => ({ auth: { signOut } }) }));
 
-import { getClaims, logout } from "@/lib/authClient";
+import { getClaims, logout, SessionExpiredError } from "@/lib/authClient";
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -23,10 +23,8 @@ describe("logout", () => {
     expect(signOut).toHaveBeenCalledOnce();
   });
 
-  it("clears the session cookies and leaves the portal when the server call fails", async () => {
+  it("clears the session cookies when the server call fails", async () => {
     signOut.mockResolvedValue({ error: new Error("503") });
-    const assign = vi.fn();
-    vi.stubGlobal("window", { location: { assign } });
     const written: string[] = [];
     vi.stubGlobal("document", {
       get cookie() {
@@ -43,7 +41,6 @@ describe("logout", () => {
       "sb-ref-auth-token.0=; Max-Age=0; path=/",
       "sb-ref-auth-token.1=; Max-Age=0; path=/",
     ]);
-    expect(assign).toHaveBeenCalledWith("/portal/login");
   });
 });
 
@@ -54,10 +51,16 @@ describe("getClaims", () => {
     await expect(getClaims()).resolves.toEqual({ role: "ADMIN", hubId: null });
   });
 
-  it.each([401, 403])("returns null when access is denied with %i", async (status) => {
-    vi.stubGlobal("fetch", vi.fn(async () => ({ ok: false, status })));
+  it("returns null when access is denied", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => ({ ok: false, status: 403 })));
 
     await expect(getClaims()).resolves.toBeNull();
+  });
+
+  it("reports an expired session separately from a denial", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => ({ ok: false, status: 401 })));
+
+    await expect(getClaims()).rejects.toBeInstanceOf(SessionExpiredError);
   });
 
   it("throws when the server is unavailable", async () => {

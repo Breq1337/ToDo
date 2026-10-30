@@ -10,7 +10,7 @@ vi.mock("@/lib/supabase/server", () => ({
   createServiceRoleClient: () => db,
 }));
 
-import { AuthUnavailableError, getAuthUserWithRole } from "@/lib/supabase/auth-helpers";
+import { AuthUnavailableError, getAuthUserWithRole, getProfileWithRole } from "@/lib/supabase/auth-helpers";
 import { GET as authMe } from "@/app/api/auth/me/route";
 
 const adminUser = { id: "user-1", email: "pessoa@example.com" };
@@ -66,9 +66,32 @@ describe("getAuthUserWithRole", () => {
     getUser.mockResolvedValue({ data: { user: corporateUser }, error: null });
     db = createFakeDb({ allowlist: { data: null, error: new Error("db down") } });
 
-    await expect(getAuthUserWithRole()).rejects.toBeInstanceOf(AuthUnavailableError);
+    await expect(getProfileWithRole(corporateUser.id, corporateUser.email)).rejects.toBeInstanceOf(AuthUnavailableError);
     expect(db.upserts).toEqual([]);
     expect((await authMe()).status).toBe(503);
+  });
+
+  it("keeps denying with null for other handlers during an outage", async () => {
+    getUser.mockResolvedValue({ data: { user: corporateUser }, error: null });
+    db = createFakeDb({ allowlist: { data: null, error: new Error("db down") } });
+    vi.spyOn(console, "error").mockImplementation(() => {});
+
+    await expect(getAuthUserWithRole()).resolves.toBeNull();
+  });
+
+  it.each([408, 429, 503])("treats Supabase Auth status %i as unavailable", async (status) => {
+    getUser.mockResolvedValue({ data: { user: null }, error: Object.assign(new Error("busy"), { status }) });
+
+    expect((await authMe()).status).toBe(503);
+  });
+
+  it("answers 403 for a blocked account with a valid session", async () => {
+    getUser.mockResolvedValue({ data: { user: corporateUser }, error: null });
+    db = createFakeDb({
+      allowlist: { data: { active: false, role_default: "EMPLOYEE", hub_id: null }, error: null },
+    });
+
+    expect((await authMe()).status).toBe(403);
   });
 
   it("reports unavailability when Supabase Auth cannot be reached", async () => {

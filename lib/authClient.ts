@@ -14,6 +14,8 @@ export interface UserClaims {
 
 const CLAIMS_TIMEOUT_MS = 10_000;
 
+export class SessionExpiredError extends Error {}
+
 export async function loginWithGoogle(): Promise<{ user: { id: string; email?: string; user_metadata?: { full_name?: string } } }> {
   const supabase = createClient();
   const { data, error } = await supabase.auth.signInWithOAuth({
@@ -61,7 +63,7 @@ export async function logout(): Promise<void> {
   if (!error) return;
 
   // signOut keeps the session when the server cannot be reached, so drop it here. No SIGNED_OUT
-  // event fires in this case, hence the explicit navigation.
+  // event fires in this case: callers must navigate on their own.
   document.cookie
     .split("; ")
     .map((cookie) => cookie.split("=")[0])
@@ -69,7 +71,6 @@ export async function logout(): Promise<void> {
     .forEach((name) => {
       document.cookie = `${name}=; Max-Age=0; path=/`;
     });
-  window.location.assign("/portal/login");
 }
 
 /**
@@ -92,14 +93,16 @@ export async function getIdToken(_forceRefresh?: boolean): Promise<string | null
 
 /**
  * Get role/hubId from API (profile). Call after login to get claims equivalent.
- * Returns null when access is denied and throws when it could not be determined.
+ * Returns null when access is denied, and throws SessionExpiredError when the session is no longer
+ * valid or a plain Error when access could not be determined.
  */
 export async function getClaims(): Promise<UserClaims | null> {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), CLAIMS_TIMEOUT_MS);
   try {
     const res = await fetch("/api/auth/me", { credentials: "include", signal: controller.signal });
-    if (res.status === 401 || res.status === 403) return null;
+    if (res.status === 401) throw new SessionExpiredError();
+    if (res.status === 403) return null;
     if (!res.ok) throw new Error(`auth/me ${res.status}`);
     const data = await res.json();
     if (data.role) return { role: data.role as PortalRole, hubId: data.hubId ?? null };
