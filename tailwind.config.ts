@@ -19,7 +19,21 @@ const config: Config = {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
           hover: "hsl(var(--primaryHover))",
+          ink: "hsl(var(--primary-ink))",
         },
+        bg2: "hsl(var(--bg2))",
+        faint: "hsl(var(--faint))",
+        deep: {
+          DEFAULT: "hsl(var(--deep))",
+          foreground: "hsl(var(--deep-foreground))",
+          muted: "hsl(var(--deep-muted))",
+        },
+        fern: "hsl(var(--fern))",
+        polaroid: {
+          DEFAULT: "hsl(var(--polaroid))",
+          foreground: "hsl(var(--polaroid-foreground))",
+        },
+        tile: "hsl(var(--tile))",
         secondary: {
           DEFAULT: "hsl(var(--surface2))",
           foreground: "hsl(var(--text))",
@@ -38,6 +52,7 @@ const config: Config = {
       fontFamily: {
         sans: ["var(--font-sans)", "system-ui", "sans-serif"],
         display: ["var(--font-display)", "var(--font-sans)", "sans-serif"],
+        mono: ["var(--font-mono)", "ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
       },
       animation: {
         "marquee": "marquee 40s linear infinite",

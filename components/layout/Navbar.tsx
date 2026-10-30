@@ -3,9 +3,8 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { motion } from "motion/react";
 import { Menu, X, Sun, Moon, Languages } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useTheme } from "@/components/providers/ThemeProvider";
 import { useLocale } from "@/components/providers/LocaleProvider";
 import { getContent } from "@/content/i18n";
@@ -20,95 +19,56 @@ const navLinks = [
   { href: "/portal/login", key: "portal" as const },
 ];
 
-const LOGO_LIGHT = "/images/logo_preta.png";
-const LOGO_DARK = "/images/logo_branca.png";
-const LOGO_FALLBACK = "/images/todo_logo-21.jpeg";
-/** Dimensões da logo (proporção fixa 256x286). */
-const LOGO_WIDTH = 256;
-const LOGO_HEIGHT = 286;
+/** Logos recortadas e com fundo transparente; a troca por tema é feita no CSS, sem piscar. */
+const LOGO_LIGHT = "/images/brand/logo-preta.png";
+const LOGO_DARK = "/images/brand/logo-branca.png";
+
+export function BrandLogo({ className, priority = false }: { className?: string; priority?: boolean }) {
+  return (
+    <>
+      <Image src={LOGO_LIGHT} alt="To Do Green" width={220} height={240} priority={priority} className={cn("w-auto dark:hidden", className)} />
+      <Image src={LOGO_DARK} alt="To Do Green" width={215} height={240} priority={priority} className={cn("hidden w-auto dark:block", className)} />
+    </>
+  );
+}
 
 export function Navbar() {
   const pathname = usePathname();
   const { theme, setTheme } = useTheme();
   const { locale, setLocale } = useLocale();
   const content = getContent(locale).nav;
-  const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [logoSrc, setLogoSrc] = useState(theme === "light" ? LOGO_LIGHT : LOGO_DARK);
 
-  useEffect(() => {
-    setLogoSrc(theme === "light" ? LOGO_LIGHT : LOGO_DARK);
-  }, [theme]);
-
-  const handleLogoError = () => setLogoSrc(LOGO_FALLBACK);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  const isActive = (href: string) => (href === "/" ? pathname === "/" : pathname.startsWith(href));
 
   return (
-    <motion.header
-      initial={{ y: -20, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.4 }}
-      className={cn(
-        "sticky top-0 z-50 w-full transition-all duration-300",
-        scrolled
-          ? "bg-background/80 backdrop-blur-xl border-b border-border shadow-sm"
-          : "bg-transparent"
-      )}
-    >
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Link href="/" className="relative z-10 flex items-center gap-2" aria-label="To Do Green - Home">
-          <span className="flex h-10 max-h-10 w-auto items-center justify-center overflow-hidden">
-            <Image
-              src={logoSrc}
-              alt="To Do Green"
-              width={LOGO_WIDTH}
-              height={LOGO_HEIGHT}
-              className="h-10 w-auto max-h-10 object-contain object-left"
-              priority
-              onError={handleLogoError}
-            />
-          </span>
+    <header className="sticky top-0 z-50 w-full border-b border-border bg-background/90 backdrop-blur-xl">
+      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-6 px-4 sm:px-6 lg:px-8">
+        <Link href="/" className="relative z-10 flex items-center" aria-label="To Do Green - Home">
+          <BrandLogo className="h-[34px]" priority />
         </Link>
 
-        <nav className="hidden md:flex items-center gap-1" aria-label="Main navigation">
-          {navLinks.map(({ href, key }) => {
-            const isActive =
-              href === "/"
-                ? pathname === "/"
-                : pathname.startsWith(href);
-            const label = content[key];
-            return (
-              <Link
-                key={href}
-                href={href}
-                className={cn(
-                  "relative px-4 py-2 text-sm font-medium text-foreground/90 hover:text-foreground rounded-lg transition-colors",
-                  isActive && "text-primary"
-                )}
-              >
-                {isActive && (
-                  <motion.span
-                    layoutId="nav-pill"
-                    className="absolute inset-0 rounded-lg bg-primary/10"
-                    transition={{ type: "spring", bounce: 0.2, duration: 0.4 }}
-                  />
-                )}
-                <span className="relative">{label}</span>
-              </Link>
-            );
-          })}
+        <nav className="hidden items-center gap-1 lg:flex" aria-label="Main navigation">
+          {navLinks.map(({ href, key }) => (
+            <Link
+              key={href}
+              href={href}
+              aria-current={isActive(href) ? "page" : undefined}
+              className={cn(
+                "rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-bg2 hover:text-foreground",
+                isActive(href) && "text-primary-ink"
+              )}
+            >
+              {content[key]}
+            </Link>
+          ))}
         </nav>
 
-        <div className="hidden md:flex items-center gap-2">
+        <div className="hidden items-center gap-1 lg:flex">
           <button
             type="button"
             onClick={() => setLocale(locale === "pt-BR" ? "en" : "pt-BR")}
-            className="flex min-h-11 items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-surface2 transition-colors"
+            className="flex min-h-11 items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors hover:bg-bg2 hover:text-foreground"
             aria-label={locale === "pt-BR" ? "Switch to English" : "Mudar para português"}
           >
             <Languages className="h-4 w-4" />
@@ -117,7 +77,7 @@ export function Navbar() {
           <button
             type="button"
             onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-            className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg p-2 text-muted-foreground hover:text-foreground hover:bg-surface2 transition-colors"
+            className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg p-2 text-muted-foreground transition-colors hover:bg-bg2 hover:text-foreground"
             aria-label={theme === "light" ? "Switch to dark mode" : "Switch to light mode"}
           >
             {theme === "light" ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
@@ -126,7 +86,7 @@ export function Navbar() {
 
         <button
           type="button"
-          className="relative z-10 inline-flex min-h-11 min-w-11 items-center justify-center md:hidden rounded-lg p-2 text-foreground"
+          className="relative z-10 inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg p-2 text-foreground lg:hidden"
           onClick={() => setMobileOpen((o) => !o)}
           aria-expanded={mobileOpen}
           aria-label="Toggle menu"
@@ -136,23 +96,17 @@ export function Navbar() {
       </div>
 
       {mobileOpen && (
-        <motion.div
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: "auto" }}
-          exit={{ opacity: 0, height: 0 }}
-          className="md:hidden border-t border-border bg-background/95 backdrop-blur-xl"
-        >
+        <div className="border-t border-border bg-background lg:hidden">
           <div className="flex flex-col gap-1 px-4 py-4">
             {navLinks.map(({ href, key }) => (
               <Link
                 key={href}
                 href={href}
                 onClick={() => setMobileOpen(false)}
+                aria-current={isActive(href) ? "page" : undefined}
                 className={cn(
                   "rounded-lg px-4 py-3 text-sm font-medium",
-                  pathname === href || (href !== "/" && pathname.startsWith(href))
-                    ? "bg-primary/10 text-primary"
-                    : "text-foreground"
+                  isActive(href) ? "bg-bg2 text-primary-ink" : "text-foreground"
                 )}
               >
                 {content[key]}
@@ -172,9 +126,7 @@ export function Navbar() {
               </button>
               <button
                 type="button"
-                onClick={() => {
-                  setTheme(theme === "light" ? "dark" : "light");
-                }}
+                onClick={() => setTheme(theme === "light" ? "dark" : "light")}
                 className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg p-2 text-muted-foreground"
                 aria-label={theme === "light" ? "Switch to dark mode" : "Switch to light mode"}
               >
@@ -182,8 +134,8 @@ export function Navbar() {
               </button>
             </div>
           </div>
-        </motion.div>
+        </div>
       )}
-    </motion.header>
+    </header>
   );
 }

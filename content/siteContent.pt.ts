@@ -1,16 +1,14 @@
 /**
- * Official To Do Green site copy — extracted 1:1 from todogreen.com.br
- * Portuguese (pt-BR). Do not invent or alter facts.
+ * Official To Do Green site copy, Portuguese (pt-BR). Do not invent or alter facts.
+ * `home` comes from todogreenlog.com (2026); the other pages from todogreen.com.br.
  */
 
 export const siteContentPt = {
   meta: {
-    title: "To Do Green – Mudando o Mundo a Cada Entrega",
-    description:
-      "Transportadora verde que realiza 100% das entregas com veículos elétricos. Delivery sem emissão de CO2. Grande São Paulo e Sorocaba.",
-    ogTitle: "To Do Green – Mudando o Mundo a Cada Entrega",
-    ogDescription:
-      "Somos uma transportadora verde que realiza 100% das entregas com veículos elétricos, oferecendo qualidade, segurança e eficiência.",
+    title: "To Do Green – A maior transportadora elétrica do Brasil",
+    description: "Transportadora 100% elétrica: first, middle e last mile com frota própria. 500+ veículos elétricos, 196+ cidades atendidas e 38 milhões de entregas.",
+    ogTitle: "To Do Green – A maior transportadora elétrica do Brasil",
+    ogDescription: "Transporte confiável e elétrico na mesma operação, do tamanho que a indústria brasileira exige.",
   },
   nav: {
     home: "Início",
@@ -21,37 +19,209 @@ export const siteContentPt = {
     workWithUs: "Trabalhe conosco",
     portal: "Área do colaborador",
   },
-  hero: {
-    badge: "To Do Green",
-    headline: "Mudando o Mundo a Cada Entrega",
-    subheadline:
-      "Somos uma transportadora verde que realiza 100% das entregas com veículos elétricos, oferecendo qualidade, segurança e eficiência. Protegendo o meio ambiente e cuidando do entregador.",
-    cta: "Fale conosco",
-    communityHeadline: "Faça parte da comunidade",
-  },
-  solution: {
-    title: "Solução",
-    body: "Entregas 100% elétricas no last e middle mile: zero emissão de CO₂ no deslocamento. Frotas de furgões, motos e caminhões leves conectam marcas e consumidores com logística humanizada e rastreável. Reduzimos ruído e poluição local, priorizamos a segurança do entregador e oferecemos relatórios mensais de emissões evitadas para parceiros que precisam de métricas ESG.",
-  },
-  mission: {
-    title: "Missão",
-    body: "Transformar o sistema logístico em um modelo consciente e sustentável: cada quilômetro rodado com veículos elétricos evita em média 1,6 kg de CO₂ na atmosfera. Valorizamos pessoas, transparência e impacto mensurável, integrando práticas ESG ao dia a dia das entregas na Grande São Paulo e em Sorocaba.",
-  },
-  co2Counter: {
-    label: "kg de CO₂ economizados (estimativa)",
-    since: "Desde o início das operações",
-  },
-  drivers: {
-    title: "A To Do Green sabe que o maior impulsionador do setor de logística são os entregadores.",
-    intro:
-      "Chegamos para repensar e ressignificar a relação com as pessoas. Nossos motoristas entregadores fazem parte de nosso Green team. Confira alguns dos nossos benefícios:",
-    benefit1:
-      "Programa de Mentoria Voluntária para desenvolvimento profissional e pessoal.",
-    benefit2:
-      "Veículo elétrico, sem custo adicional para os entregadores: combustível, seguro e desgastes são nossa responsabilidade.",
-    benefit3:
-      "Base operacional com toda infraestrutura: local para descanso, realizar refeições, uso de banheiro e ambiente descontraído.",
-    roleLabel: "motorista / entregador",
+  home: {
+    hero: {
+      eyebrow: "Transportadora 100% elétrica · desde 2021",
+      title: "A maior transportadora",
+      titleAccent: "elétrica do Brasil.",
+      lead: "Transporte confiável e elétrico na mesma operação, do tamanho que a indústria brasileira exige e com a previsibilidade que a cadeia não pode perder.",
+      ctaPrimary: "Fale com a gente",
+      ctaSecondary: "Conheça nossa operação",
+      photoAlt: "Furgões elétricos da To Do Green em fila no pátio de uma base, ao pôr do sol",
+      photoCaption: "Frota própria 100% elétrica",
+      stampValue: "6.000+ t",
+      stampLabel: "de CO₂ evitadas até 2023",
+    },
+    stats: {
+      ariaLabel: "A To Do Green em números",
+      items: [
+        {
+          value: "500+",
+          label: "veículos elétricos",
+        },
+        {
+          value: "196+",
+          label: "cidades atendidas",
+        },
+        {
+          value: "38 mi",
+          label: "entregas realizadas",
+        },
+        {
+          value: "100%",
+          label: "de frota elétrica",
+        },
+      ],
+    },
+    challenge: {
+      eyebrow: "O desafio",
+      title: "As grandes cadeias precisam descarbonizar o transporte sem abrir mão de escala, cobertura e nível de serviço.",
+      body: "Fundada por Paula Simões, a To Do Green nasceu da provocação de que o transporte de larga escala não precisava ser poluente. O que começou como um desafio de engenharia e persistência comercial hoje é o principal motor de descarbonização do e-commerce no país.",
+      quote: "Escolhemos transformar uma visão de futuro em operação. Começamos quando não havia rede de recarga, nem crédito adequado, nem manual de operação.",
+      quoteAuthor: "Paula Simões · fundadora e CEO",
+      portraitAlt: "Retrato de Paula Simões, fundadora e CEO da To Do Green",
+    },
+    operation: {
+      eyebrow: "Nossa operação",
+      title: "Operamos toda a cadeia logística.",
+      steps: [
+        {
+          tag: "Coleta",
+          title: "First mile",
+          body: "Coleta nos pontos de origem com frota elétrica própria, com segurança e rastreamento em tempo real.",
+        },
+        {
+          tag: "Transferência",
+          title: "Middle mile",
+          body: "Transporte entre hubs regionais com eficiência operacional e manutenção padronizada, otimizando o consumo de energia.",
+        },
+        {
+          tag: "Entrega",
+          title: "Last mile",
+          body: "Entrega final com rastreamento em tempo real e comprovante digital de entrega.",
+        },
+      ],
+      mapAlt: "Mapa do estado de São Paulo com os municípios atendidos pela To Do Green marcados em verde",
+      mapCaption: "Nossa operação no estado de São Paulo",
+    },
+    endToEnd: {
+      eyebrow: "Soluções end-to-end",
+      title: "Um único responsável por toda a cadeia.",
+      intro: "Previsibilidade, controle e redução real de emissões, do recebimento à devolução.",
+      steps: [
+        {
+          title: "Coleta e recebimento",
+          body: "Coletas programadas, conferência e integração com o seu sistema.",
+        },
+        {
+          title: "Armazenagem e separação",
+          body: "Gestão de estoque, separação e preparação de cargas.",
+        },
+        {
+          title: "Roteirização",
+          body: "Rotas planejadas por janela de entrega, densidade e autonomia da frota.",
+        },
+        {
+          title: "Transferência",
+          body: "Movimentação entre bases com controle de SLA de ponta a ponta.",
+        },
+        {
+          title: "Última milha",
+          body: "Entrega urbana elétrica com rastreio e comprovação digital.",
+        },
+        {
+          title: "Logística reversa",
+          body: "Retornos, trocas e devoluções tratados no mesmo fluxo.",
+        },
+      ],
+    },
+    differentials: {
+      eyebrow: "Por que a To Do Green",
+      title: "Nossos diferenciais",
+      photoAlt: "Base logística da To Do Green com furgões, caminhões leves e motos elétricas estacionados no pátio",
+      items: [
+        {
+          figure: "550+",
+          title: "Frota própria 100% elétrica",
+          body: "Veículos próprios dão controle total sobre a operação e a manutenção.",
+          checks: [
+            "Conhecimento real de consumo e autonomia",
+            "Manutenção padronizada e previsível",
+            "Dados de operação que alimentam inovação",
+          ],
+        },
+        {
+          figure: "98%",
+          title: "Performance operacional",
+          body: "Entrega no prazo e com qualidade é garantia, não exceção.",
+          checks: [
+            "98% On-Time-In-Full (OTIF)",
+            "97,8% de entregas concluídas (DCR)",
+            "Rastreamento em tempo real",
+          ],
+        },
+        {
+          figure: "196+",
+          title: "Capilaridade",
+          body: "Presença em mais de 196 cidades com infraestrutura própria. Uma operação que cresce com você.",
+          checks: [
+            "Hubs estratégicos em regiões-chave",
+            "Escalabilidade comprovada",
+            "Expansão planejada ano a ano",
+          ],
+        },
+        {
+          figure: "TCO",
+          title: "Custo competitivo",
+          body: "Menor custo de energia por km, manutenção mais simples e operação mais previsível.",
+          checks: [
+            "Preço competitivo com a combustão",
+            "Nascemos elétricos, sem custo de reconversão",
+            "Sem a volatilidade do diesel, com kWh previsível",
+          ],
+        },
+      ],
+    },
+    culture: {
+      eyebrow: "Nossa cultura",
+      title: "Um único jeito de agir.",
+      intro: "Cinco valores orientam decisões, relações, entregas e a forma como enfrentamos os desafios da operação.",
+      values: [
+        {
+          name: "Mão na massa",
+          motto: "Menos “não dá”, mais “como a gente faz?”.",
+        },
+        {
+          name: "Compromisso",
+          motto: "Problema não tem dono. Solução tem time.",
+        },
+        {
+          name: "Respeito",
+          motto: "Segurança para falar, respeito para ouvir.",
+        },
+        {
+          name: "Transparência",
+          motto: "Clareza gera velocidade. Verdade gera confiança.",
+        },
+        {
+          name: "Excelência",
+          motto: "Cada entrega é uma chance de elevar o padrão.",
+        },
+      ],
+    },
+    join: {
+      eyebrow: "Trabalhe conosco",
+      title: "Quer construir a operação com a gente?",
+      body: "Cada pessoa aqui participa da construção de uma logística mais eficiente, elétrica e consistente. Procuramos gente que veja os desafios, assuma responsabilidade, trabalhe em equipe e queira elevar o padrão de cada entrega.",
+      benefits: [
+        {
+          title: "Mentoria voluntária",
+          body: "Programa de desenvolvimento profissional e pessoal.",
+        },
+        {
+          title: "Veículo elétrico sem custo",
+          body: "Combustível, seguro e desgaste ficam por nossa conta.",
+        },
+        {
+          title: "Base com infraestrutura",
+          body: "Lugar para descansar, fazer as refeições e usar o banheiro.",
+        },
+      ],
+      photoAlt: "Equipe de entregadores da To Do Green com coletes refletivos ao lado das motos elétricas, em frente a uma base",
+      tudu: {
+        eyebrow: "Motoristas e parceiros da operação",
+        title: "Fale com o Tudú, nosso assistente de recrutamento.",
+        body: "Pelo WhatsApp, ele orienta o cadastro de motoristas e de quem quer construir a operação com a gente. É só mandar um oi.",
+        cta: "Falar com o Tudú",
+        alt: "Tudú, mascote astronauta da To Do Green, acenando",
+      },
+    },
+    cta: {
+      eyebrow: "Para empresas",
+      title: "Traga a sua operação. A gente desenha a solução.",
+      body: "Conte o volume, as cidades e os prazos. Nosso time comercial monta a proposta.",
+      button: "Fale com a gente",
+    },
   },
   forCompanies: {
     statsIntro: "Motivos para ser nosso parceiro",
@@ -121,32 +291,21 @@ export const siteContentPt = {
     submit: "Enviar",
     emailLabel: "E-mail",
     emailValue: "atendimento@todogreen.com.br",
-    sacLabel: "SAC — fale direto com nossa equipe",
-    sacValue: "maria@todogreen.com.br",
     footerNote:
       "Utilize nossos canais de comunicação para contar como nossos motoristas estão dirigindo.",
     ctaTitle: "Queremos ajudar o planeta e os seus negócios",
     ctaButton: "Fale conosco",
   },
   footer: {
-    email: "E-mail",
-    sac: "SAC — fale direto com nossa equipe",
-    sacValue: "maria@todogreen.com.br",
-    note: "Utilize nossos canais de comunicação para contar como nossos motoristas estão dirigindo.",
+    tagline: "A maior transportadora elétrica do Brasil.",
+    navTitle: "Navegação",
+    contactTitle: "Contato",
+    ecosystem: "Ecossistema All Green · To Do Green · Green On · Green Mob",
+    rights: "Todos os direitos reservados.",
   },
   common: {
-    clientsTitle: "Nossos clientes",
-    partnersBlockTitle: "Seja um parceiro To Do Green",
-    partnersPause: "Pausar logos",
-    partnersResume: "Retomar logos",
-  },
-  tutorial: {
-    title: "Bem-vindo ao site To Do Green",
-    intro: "Algumas dicas rápidas para você aproveitar melhor:",
-    themeStep: "Modo claro/escuro — no canto superior direito você pode alternar entre tema claro e escuro (ícone de lua/sol).",
-    languageStep: "Idioma — ao lado do tema, o botão PT/EN permite trocar o site entre português e inglês.",
-    portalStep: "Área do colaborador — no menu principal, o link «Área do colaborador» leva à página de login do portal (cursos, ranking, tutor).",
-    buttonDone: "Entendi",
+    clientsEyebrow: "Clientes",
+    clientsTitle: "Quem já entrega com a To Do Green",
   },
 };
 

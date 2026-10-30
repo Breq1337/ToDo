@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import Image from "next/image";
 import { motion } from "motion/react";
-import { Mail, MessageCircle, Loader2, CheckCircle, AlertCircle } from "lucide-react";
+import { Mail, Loader2, CheckCircle, AlertCircle } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -105,18 +105,6 @@ export function ContactContent() {
               >
                 <Mail className="h-5 w-5 shrink-0" />
                 {c.emailValue}
-              </a>
-            </div>
-            <div>
-              <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-2">
-                {c.sacLabel}
-              </h2>
-              <a
-                href={`mailto:${c.sacValue}`}
-                className="flex items-center gap-3 text-foreground hover:text-primary transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-lg p-2 -m-2"
-              >
-                <MessageCircle className="h-5 w-5 shrink-0" />
-                {c.sacValue}
               </a>
             </div>
             <p className="text-sm text-muted-foreground max-w-md">{c.footerNote}</p>

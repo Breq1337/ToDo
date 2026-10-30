@@ -7,12 +7,10 @@ import type { SiteContent } from "./siteContent.pt";
 
 export const siteContentEn: SiteContent = {
   meta: {
-    title: "To Do Green – Changing the World with Every Delivery",
-    description:
-      "Green logistics company that performs 100% of deliveries with electric vehicles. Zero CO2 delivery. Greater São Paulo and Sorocaba.",
-    ogTitle: "To Do Green – Changing the World with Every Delivery",
-    ogDescription:
-      "We are a green logistics company that performs 100% of deliveries with electric vehicles, offering quality, safety and efficiency.",
+    title: "To Do Green – Brazil's largest electric carrier",
+    description: "100% electric carrier: first, middle and last mile with our own fleet. 500+ electric vehicles, 196+ cities served and 38 million deliveries.",
+    ogTitle: "To Do Green – Brazil's largest electric carrier",
+    ogDescription: "Reliable, electric transport in a single operation, at the scale Brazilian industry demands.",
   },
   nav: {
     home: "Home",
@@ -23,37 +21,209 @@ export const siteContentEn: SiteContent = {
     workWithUs: "Work with us",
     portal: "Collaborator area",
   },
-  hero: {
-    badge: "To Do Green",
-    headline: "Changing the World with Every Delivery",
-    subheadline:
-      "We are a green logistics company that performs 100% of deliveries with electric vehicles, offering quality, safety and efficiency. Protecting the environment and caring for our drivers.",
-    cta: "Contact us",
-    communityHeadline: "Join the community",
-  },
-  solution: {
-    title: "Solution",
-    body: "100% electric deliveries in last and middle mile: zero CO₂ emissions from transport. Fleets of vans, motorcycles and light trucks connect brands and consumers with humanized, traceable logistics. We reduce noise and local pollution, prioritize driver safety, and provide monthly reports on avoided emissions for partners who need ESG metrics.",
-  },
-  mission: {
-    title: "Mission",
-    body: "To transform logistics into a conscious, sustainable model: every kilometer driven with electric vehicles avoids an average of 1.6 kg of CO₂ in the atmosphere. We value people, transparency and measurable impact, integrating ESG practices into daily deliveries in Greater São Paulo and Sorocaba.",
-  },
-  co2Counter: {
-    label: "kg of CO₂ avoided (estimate)",
-    since: "Since operations began",
-  },
-  drivers: {
-    title: "To Do Green knows that the main drivers of the logistics sector are the delivery drivers.",
-    intro:
-      "We are here to rethink and reframe the relationship with people. Our delivery drivers are part of our Green team. Here are some of our benefits:",
-    benefit1:
-      "Voluntary Mentorship Program for professional and personal development.",
-    benefit2:
-      "Electric vehicle at no extra cost to drivers: fuel, insurance and wear are our responsibility.",
-    benefit3:
-      "Operational base with full infrastructure: rest area, meals, bathroom and a relaxed environment.",
-    roleLabel: "driver / delivery person",
+  home: {
+    hero: {
+      eyebrow: "100% electric carrier · since 2021",
+      title: "Brazil's largest",
+      titleAccent: "electric carrier.",
+      lead: "Reliable, electric transport in a single operation, at the scale Brazilian industry demands and with the predictability the supply chain can't afford to lose.",
+      ctaPrimary: "Talk to us",
+      ctaSecondary: "See our operation",
+      photoAlt: "To Do Green electric vans lined up in a base yard at sunset",
+      photoCaption: "Our own 100% electric fleet",
+      stampValue: "6,000+ t",
+      stampLabel: "of CO₂ avoided by 2023",
+    },
+    stats: {
+      ariaLabel: "To Do Green in numbers",
+      items: [
+        {
+          value: "500+",
+          label: "electric vehicles",
+        },
+        {
+          value: "196+",
+          label: "cities served",
+        },
+        {
+          value: "38M",
+          label: "deliveries made",
+        },
+        {
+          value: "100%",
+          label: "electric fleet",
+        },
+      ],
+    },
+    challenge: {
+      eyebrow: "The challenge",
+      title: "Large supply chains need to decarbonize transport without giving up scale, coverage or service level.",
+      body: "Founded by Paula Simões, To Do Green was born from the idea that large-scale transport didn't have to pollute. What started as a challenge of engineering and commercial persistence is now the main driver of e-commerce decarbonization in Brazil.",
+      quote: "We chose to turn a vision of the future into an operation. We started when there was no charging network, no suitable financing and no operating manual.",
+      quoteAuthor: "Paula Simões · founder and CEO",
+      portraitAlt: "Portrait of Paula Simões, founder and CEO of To Do Green",
+    },
+    operation: {
+      eyebrow: "Our operation",
+      title: "We run the entire logistics chain.",
+      steps: [
+        {
+          tag: "Pickup",
+          title: "First mile",
+          body: "Pickup at origin points with our own electric fleet, with security and real-time tracking.",
+        },
+        {
+          tag: "Transfer",
+          title: "Middle mile",
+          body: "Transport between regional hubs with operational efficiency and standardized maintenance that optimizes energy use.",
+        },
+        {
+          tag: "Delivery",
+          title: "Last mile",
+          body: "Final delivery with real-time tracking and digital proof of delivery.",
+        },
+      ],
+      mapAlt: "Map of the state of São Paulo with the cities served by To Do Green marked in green",
+      mapCaption: "Our operation in the state of São Paulo",
+    },
+    endToEnd: {
+      eyebrow: "End-to-end solutions",
+      title: "One partner for the whole chain.",
+      intro: "Predictability, control and real emission cuts, from receiving to returns.",
+      steps: [
+        {
+          title: "Pickup and receiving",
+          body: "Scheduled pickups, checking and integration with your system.",
+        },
+        {
+          title: "Storage and picking",
+          body: "Inventory management, picking and load preparation.",
+        },
+        {
+          title: "Routing",
+          body: "Routes planned by delivery window, density and fleet range.",
+        },
+        {
+          title: "Transfer",
+          body: "Movement between bases with end-to-end SLA control.",
+        },
+        {
+          title: "Last mile",
+          body: "Electric urban delivery with tracking and digital proof.",
+        },
+        {
+          title: "Reverse logistics",
+          body: "Returns and exchanges handled in the same flow.",
+        },
+      ],
+    },
+    differentials: {
+      eyebrow: "Why To Do Green",
+      title: "What sets us apart",
+      photoAlt: "To Do Green logistics base with electric vans, light trucks and motorcycles parked in the yard",
+      items: [
+        {
+          figure: "550+",
+          title: "Our own 100% electric fleet",
+          body: "Owning our vehicles gives us full control over operations and maintenance.",
+          checks: [
+            "Real-world knowledge of consumption and range",
+            "Standardized, predictable maintenance",
+            "Operating data that feeds innovation",
+          ],
+        },
+        {
+          figure: "98%",
+          title: "Operational performance",
+          body: "On-time, quality delivery is a guarantee, not an exception.",
+          checks: [
+            "98% On-Time-In-Full (OTIF)",
+            "97.8% Delivery Completion Rate (DCR)",
+            "Real-time tracking",
+          ],
+        },
+        {
+          figure: "196+",
+          title: "Coverage",
+          body: "Present in 196+ cities with our own infrastructure. An operation that grows with you.",
+          checks: [
+            "Strategic hubs in key regions",
+            "Proven scalability",
+            "Expansion planned year by year",
+          ],
+        },
+        {
+          figure: "TCO",
+          title: "Competitive cost",
+          body: "Lower energy cost per km, simpler maintenance and a more predictable operation.",
+          checks: [
+            "Pricing competitive with combustion",
+            "Born electric, with no conversion costs",
+            "No diesel volatility, with predictable kWh costs",
+          ],
+        },
+      ],
+    },
+    culture: {
+      eyebrow: "Our culture",
+      title: "One way of doing things.",
+      intro: "Five values guide our decisions, relationships, deliveries and how we take on the challenges of the operation.",
+      values: [
+        {
+          name: "Hands-on",
+          motto: "Less “can't be done”, more “how do we do it?”.",
+        },
+        {
+          name: "Commitment",
+          motto: "Problems have no owner. Solutions have a team.",
+        },
+        {
+          name: "Respect",
+          motto: "Safe to speak, respectful to listen.",
+        },
+        {
+          name: "Transparency",
+          motto: "Clarity creates speed. Truth creates trust.",
+        },
+        {
+          name: "Excellence",
+          motto: "Every delivery is a chance to raise the bar.",
+        },
+      ],
+    },
+    join: {
+      eyebrow: "Work with us",
+      title: "Want to build the operation with us?",
+      body: "Everyone here helps build more efficient, electric and consistent logistics. We look for people who see the challenges, take responsibility, work as a team and want to raise the bar on every delivery.",
+      benefits: [
+        {
+          title: "Voluntary mentoring",
+          body: "A program for professional and personal development.",
+        },
+        {
+          title: "Electric vehicle at no cost",
+          body: "We cover fuel, insurance and wear.",
+        },
+        {
+          title: "Fully equipped bases",
+          body: "A place to rest, have meals and use the restroom.",
+        },
+      ],
+      photoAlt: "To Do Green delivery team in reflective vests next to their electric motorcycles, in front of a base",
+      tudu: {
+        eyebrow: "Drivers and operation partners",
+        title: "Talk to Tudú, our recruiting assistant.",
+        body: "On WhatsApp, Tudú guides drivers and anyone who wants to build the operation with us through sign-up. Just say hi.",
+        cta: "Talk to Tudú",
+        alt: "Tudú, To Do Green's astronaut mascot, waving",
+      },
+    },
+    cta: {
+      eyebrow: "For businesses",
+      title: "Bring us your operation. We'll design the solution.",
+      body: "Tell us your volumes, cities and deadlines. Our sales team will put together a proposal.",
+      button: "Talk to us",
+    },
   },
   forCompanies: {
     statsIntro: "Reasons to partner with us",
@@ -123,31 +293,20 @@ export const siteContentEn: SiteContent = {
     submit: "Send",
     emailLabel: "Email",
     emailValue: "atendimento@todogreen.com.br",
-    sacLabel: "Support — talk directly to our team",
-    sacValue: "maria@todogreen.com.br",
     footerNote:
       "Use our communication channels to tell us how our drivers are performing.",
     ctaTitle: "We want to help the planet and your business",
     ctaButton: "Contact us",
   },
   footer: {
-    email: "Email",
-    sac: "Support — talk directly to our team",
-    sacValue: "maria@todogreen.com.br",
-    note: "Use our communication channels to tell us how our drivers are performing.",
+    tagline: "Brazil's largest electric carrier.",
+    navTitle: "Navigation",
+    contactTitle: "Contact",
+    ecosystem: "All Green ecosystem · To Do Green · Green On · Green Mob",
+    rights: "All rights reserved.",
   },
   common: {
-    clientsTitle: "Our clients",
-    partnersBlockTitle: "Become a To Do Green partner",
-    partnersPause: "Pause logos",
-    partnersResume: "Resume logos",
-  },
-  tutorial: {
-    title: "Welcome to the To Do Green website",
-    intro: "A few quick tips to get the most out of it:",
-    themeStep: "Light/dark mode — in the top-right corner you can switch between light and dark theme (moon/sun icon).",
-    languageStep: "Language — next to the theme, the PT/EN button lets you switch the site between Portuguese and English.",
-    portalStep: "Collaborator area — in the main menu, the «Collaborator area» link takes you to the portal login (courses, ranking, tutor).",
-    buttonDone: "Got it",
+    clientsEyebrow: "Clients",
+    clientsTitle: "Who already delivers with To Do Green",
   },
 };
