@@ -22,6 +22,17 @@
     --muted-foreground: 140 8% 38%;
     --input: 142 15% 90%;
     --ring: 142 76% 36%;
+    /* Tokens usados só pelo site institucional; os valores da marca ficam em .site-theme */
+    --primary-ink: 142 76% 30%;
+    --faint: 140 8% 45%;
+    --deep: 147 61% 14%;
+    --deep-foreground: 87 26% 93%;
+    --deep-muted: 136 18% 71%;
+    --fern: 128 32% 56%;
+    --polaroid: 50 21% 95%;
+    --polaroid-foreground: 140 15% 20%;
+    --tile: 0 0% 100%;
+    --shadow-polaroid: 0 1px 2px rgb(20 35 26 / 0.08), 0 8px 24px rgb(20 35 26 / 0.1);
   }
 
   .dark {
@@ -42,6 +53,62 @@
     --muted-foreground: 140 8% 72%;
     --input: 140 15% 18%;
     --ring: 142 70% 45%;
+    --primary-ink: 142 60% 60%;
+    --faint: 140 8% 60%;
+    --deep: 145 49% 12%;
+    --deep-foreground: 87 26% 93%;
+    --deep-muted: 137 17% 67%;
+    --shadow-polaroid: 0 1px 2px rgb(0 0 0 / 0.4), 0 10px 28px rgb(0 0 0 / 0.45);
+  }
+
+  /* Paleta da marca (creme e verde-floresta das peças da To Do Green), só no site institucional.
+     O portal fica fora do wrapper .site-theme e continua com os tokens acima. */
+  .site-theme {
+    --primary: 146 70% 26%;
+    --primaryHover: 146 71% 21%;
+    --primarySoft: 128 32% 90%;
+    --primary-foreground: 0 0% 100%;
+    --primary-ink: 146 71% 21%;
+    --accent: 146 70% 26%;
+    --accent-foreground: 0 0% 100%;
+    --bg: 50 19% 94%;
+    --bg2: 53 17% 90%;
+    --surface: 48 33% 97%;
+    --surface2: 53 17% 90%;
+    --border: 55 13% 82%;
+    --text: 141 25% 11%;
+    --muted: 138 6% 40%;
+    --muted-foreground: 137 10% 26%;
+    --faint: 138 6% 40%;
+    --input: 55 13% 82%;
+    --ring: 146 70% 26%;
+    --deep: 147 61% 14%;
+    --deep-foreground: 87 26% 93%;
+    --deep-muted: 136 18% 71%;
+  }
+
+  .dark .site-theme {
+    --primary: 128 32% 56%;
+    --primaryHover: 127 36% 64%;
+    --primarySoft: 145 31% 14%;
+    --primary-foreground: 140 41% 7%;
+    --primary-ink: 130 38% 63%;
+    --accent: 128 32% 56%;
+    --accent-foreground: 140 41% 7%;
+    --bg: 142 31% 7%;
+    --bg2: 148 31% 10%;
+    --surface: 145 31% 11%;
+    --surface2: 148 31% 10%;
+    --border: 140 23% 18%;
+    --text: 93 21% 92%;
+    --muted: 137 9% 59%;
+    --muted-foreground: 133 11% 76%;
+    --faint: 137 9% 59%;
+    --input: 141 28% 14%;
+    --ring: 128 32% 56%;
+    --deep: 145 49% 12%;
+    --deep-foreground: 87 26% 93%;
+    --deep-muted: 137 17% 67%;
   }
 
   * {
@@ -79,21 +146,29 @@
   }
 }
 
-/* Partners marquee: continuous horizontal scroll, never reset. Pauses on hover, focus or the pause button. */
-.partners-marquee-track {
-  animation: partners-marquee 35s linear infinite;
-}
-.partners-marquee-track:hover,
-.partners-marquee-track:focus-within,
-.partners-marquee-track.is-paused {
-  animation-play-state: paused;
-}
-
-@keyframes partners-marquee {
-  0% {
-    transform: translateX(0);
+@layer components {
+  /* Rótulo em fonte mono, como as legendas das peças da marca */
+  .eyebrow {
+    @apply font-mono text-xs font-medium uppercase tracking-[0.1em] text-primary-ink;
   }
-  100% {
-    transform: translateX(-25%);
+
+  /* Foto em moldura de polaroid: objeto físico, mesma cor nos dois temas */
+  .polaroid {
+    @apply m-0 rounded-[3px] bg-polaroid px-3 pt-3;
+    box-shadow: var(--shadow-polaroid);
+  }
+  .polaroid figcaption {
+    @apply px-1 pb-4 pt-3.5 font-mono text-[13px] tracking-[0.04em] text-polaroid-foreground;
+  }
+
+  .checklist {
+    @apply grid gap-2;
+  }
+  .checklist li {
+    @apply flex items-baseline gap-2.5 text-[15px] text-muted-foreground;
+  }
+  .checklist li::before {
+    content: "";
+    @apply h-[7px] w-3 flex-none -translate-y-[3px] -rotate-45 border-b-2 border-l-2 border-primary;
   }
 }

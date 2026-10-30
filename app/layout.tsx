@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Manrope, Sora } from "next/font/google";
+import { JetBrains_Mono, Manrope, Sora } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { ThemeScript } from "@/components/providers/ThemeScript";
@@ -18,14 +18,22 @@ const fontDisplay = Sora({
   display: "swap",
 });
 
+/** Legendas e rótulos, como nas peças da marca. */
+const fontMono = JetBrains_Mono({
+  subsets: ["latin"],
+  weight: ["500"],
+  variable: "--font-mono",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
-  title: "To Do Green – Mudando o Mundo a Cada Entrega",
+  title: "To Do Green – A maior transportadora elétrica do Brasil",
   description:
-    "Transportadora verde que realiza 100% das entregas com veículos elétricos. Delivery sem emissão de CO2.",
+    "Transportadora 100% elétrica: first, middle e last mile com frota própria. 500+ veículos elétricos, 196+ cidades atendidas e 38 milhões de entregas.",
   openGraph: {
-    title: "To Do Green – Mudando o Mundo a Cada Entrega",
+    title: "To Do Green – A maior transportadora elétrica do Brasil",
     description:
-      "Somos uma transportadora verde que realiza 100% das entregas com veículos elétricos.",
+      "Transporte confiável e elétrico na mesma operação, do tamanho que a indústria brasileira exige.",
   },
 };
 
@@ -37,7 +45,7 @@ export default function RootLayout({
   return (
     <html lang="pt-BR" suppressHydrationWarning>
       <body
-        className={`${fontSans.variable} ${fontDisplay.variable} font-sans antialiased`}
+        className={`${fontSans.variable} ${fontDisplay.variable} ${fontMono.variable} font-sans antialiased`}
       >
         <ThemeScript />
         <ThemeProvider>

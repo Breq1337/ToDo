@@ -1,54 +1,43 @@
 "use client";
 
 import Image from "next/image";
-import { motion } from "motion/react";
 import { useLocale } from "@/components/providers/LocaleProvider";
 import { getContent } from "@/content/i18n";
 
+/** Logos recortadas; cada uma fica sobre um bloco branco, nos dois temas. */
 const clientLogos = [
-  { src: "/images/amazon_logo_icon_169612-150x150.jpg", alt: "Amazon" },
-  { src: "/images/natura-108-150x150.jpg", alt: "Natura" },
-  { src: "/images/raiadrogasil-e1588124943738-150x150.jpg", alt: "Raia Drogasil" },
-  { src: "/images/shein-logo-0-150x150.jpg", alt: "Shein" },
-  { src: "/images/logo_mercado-diferente_hQZ97N-150x150.jpg", alt: "Mercado Diferente" },
+  { src: "/images/clients/amazon.png", alt: "Amazon", width: 100, height: 31 },
+  { src: "/images/clients/natura.png", alt: "Natura", width: 102, height: 77 },
+  { src: "/images/clients/raia-drogasil.png", alt: "RD Raia Drogasil", width: 101, height: 74 },
+  { src: "/images/clients/shein.png", alt: "Shein", width: 102, height: 22 },
+  { src: "/images/clients/mercado-diferente.png", alt: "Mercado Diferente", width: 102, height: 101 },
 ];
 
 export function ClientsBlock() {
   const { locale } = useLocale();
-  const title = getContent(locale).common.clientsTitle;
+  const t = getContent(locale).common;
 
   return (
-    <section className="py-16 lg:py-20 bg-background">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <motion.h2
-          initial={{ opacity: 0, y: 12 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="font-display text-2xl sm:text-3xl font-bold text-center text-foreground mb-12"
-        >
-          {title}
-        </motion.h2>
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          className="flex flex-wrap justify-center items-center gap-10 sm:gap-14"
-        >
-          {clientLogos.map(({ src, alt }) => (
-            <div
-              key={src}
-              className="h-14 w-28 flex items-center justify-center grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition-all duration-300"
+    <section className="bg-bg2">
+      <div className="mx-auto grid max-w-6xl justify-items-center gap-7 px-4 py-12 text-center sm:px-6 sm:py-16 lg:px-8">
+        <span className="eyebrow">{t.clientsEyebrow}</span>
+        <h2 className="font-display text-[22px] font-bold tracking-[-0.01em] text-foreground">{t.clientsTitle}</h2>
+        <ul className="flex flex-wrap justify-center gap-3">
+          {clientLogos.map((logo) => (
+            <li
+              key={logo.src}
+              className="grid h-[72px] w-[calc(33.333%-8px)] place-items-center rounded-lg border border-border bg-tile sm:h-[84px] sm:w-[148px]"
             >
               <Image
-                src={src}
-                alt={alt}
-                width={112}
-                height={56}
-                className="h-10 w-auto object-contain"
+                src={logo.src}
+                alt={logo.alt}
+                width={logo.width}
+                height={logo.height}
+                className="h-auto max-h-9 w-auto max-w-[78%] object-contain sm:max-h-11 sm:max-w-[104px]"
               />
-            </div>
+            </li>
           ))}
-        </motion.div>
+        </ul>
       </div>
     </section>
   );

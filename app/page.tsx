@@ -1,21 +1,25 @@
-import { Hero } from "@/components/sections/Hero";
-import { SolutionMission } from "@/components/sections/SolutionMission";
-import { PartnersMarquee } from "@/components/sections/PartnersMarquee";
-import { DriversSection } from "@/components/sections/DriversSection";
-import { ForCompaniesSection } from "@/components/sections/ForCompaniesSection";
+import { HomeHero } from "@/components/sections/home/HomeHero";
+import { StatsBand } from "@/components/sections/home/StatsBand";
+import { Challenge } from "@/components/sections/home/Challenge";
+import { Operation } from "@/components/sections/home/Operation";
+import { Differentials } from "@/components/sections/home/Differentials";
 import { ClientsBlock } from "@/components/sections/ClientsBlock";
-import { CtaSection } from "@/components/sections/CtaSection";
+import { Culture } from "@/components/sections/home/Culture";
+import { JoinUs } from "@/components/sections/home/JoinUs";
+import { HomeCta } from "@/components/sections/home/HomeCta";
 
 export default function HomePage() {
   return (
     <>
-      <Hero />
-      <SolutionMission />
-      <PartnersMarquee />
-      <DriversSection />
-      <ForCompaniesSection />
+      <HomeHero />
+      <StatsBand />
+      <Challenge />
+      <Operation />
+      <Differentials />
       <ClientsBlock />
-      <CtaSection />
+      <Culture />
+      <JoinUs />
+      <HomeCta />
     </>
   );
 }
