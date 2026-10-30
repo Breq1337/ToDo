@@ -17,10 +17,6 @@ export function AdminContent() {
   const [hubId, setHubId] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [message, setMessage] = useState("");
-  const [seedStatus, setSeedStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
-  const [seedMessage, setSeedMessage] = useState("");
-  const [seedDemoStatus, setSeedDemoStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
-  const [seedDemoMessage, setSeedDemoMessage] = useState("");
   const [createEmail, setCreateEmail] = useState("");
   const [createPassword, setCreatePassword] = useState("");
   const [createName, setCreateName] = useState("");
@@ -57,56 +53,6 @@ export function AdminContent() {
     } catch {
       setStatus("error");
       setMessage(locale === "pt-BR" ? "Erro de rede." : "Network error.");
-    }
-  };
-
-  const handleSeed = async () => {
-    setSeedStatus("loading");
-    setSeedMessage("");
-    try {
-      const token = await getIdToken(true);
-      const res = await fetch("/api/admin/seed", {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setSeedStatus("error");
-        setSeedMessage(data.error || "Erro ao gerar dados.");
-        return;
-      }
-      setSeedStatus("success");
-      setSeedMessage(locale === "pt-BR" ? "Dados iniciais criados." : "Seed data created.");
-    } catch {
-      setSeedStatus("error");
-      setSeedMessage(locale === "pt-BR" ? "Erro de rede." : "Network error.");
-    }
-  };
-
-  const handleSeedDemo = async () => {
-    setSeedDemoStatus("loading");
-    setSeedDemoMessage("");
-    try {
-      const token = await getIdToken(true);
-      const res = await fetch("/api/admin/seed-demo-accounts", {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setSeedDemoStatus("error");
-        setSeedDemoMessage(data.error || "Erro ao criar contas demo.");
-        return;
-      }
-      setSeedDemoStatus("success");
-      setSeedDemoMessage(
-        data.alreadyExists
-          ? t.seedDemoAlreadyExists
-          : (t.seedDemoSuccess ?? data.message ?? (locale === "pt-BR" ? "Contas demo criadas." : "Demo accounts created."))
-      );
-    } catch {
-      setSeedDemoStatus("error");
-      setSeedDemoMessage(locale === "pt-BR" ? "Erro de rede." : "Network error.");
     }
   };
 
@@ -367,45 +313,6 @@ export function AdminContent() {
             ? "Use \"Definir função\" para atribuir função a um e-mail. A lista de permissão (allowlist) é gerenciada no Firestore na coleção allowlist."
             : "Use \"Set role\" to assign a role to an email. The allowlist is managed in Firestore collection allowlist."}
         </p>
-        <h3 className="font-medium text-foreground mb-2">{t.seed}</h3>
-        <p className="text-sm text-muted-foreground mb-3">
-          {locale === "pt-BR"
-            ? "Cria entradas de exemplo na allowlist e hubs (apenas desenvolvimento)."
-            : "Creates sample allowlist and hub entries (development only)."}
-        </p>
-        {seedMessage && (
-          <p className={seedStatus === "error" ? "text-red-600 dark:text-red-400" : "text-green-600 dark:text-green-400"}>
-            {seedMessage}
-          </p>
-        )}
-        <button
-          type="button"
-          onClick={handleSeed}
-          disabled={seedStatus === "loading"}
-          className="rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium text-foreground hover:bg-surface2 disabled:opacity-70"
-        >
-          {seedStatus === "loading" ? (locale === "pt-BR" ? "Gerando…" : "Seeding…") : t.seed}
-        </button>
-
-        <h3 className="font-medium text-foreground mt-6 mb-2">{t.seedDemo}</h3>
-        <p className="text-sm text-muted-foreground mb-3">
-          {locale === "pt-BR"
-            ? "Cria uma conta por cargo: admin@, gestor@, colaborador@, motorista@, hubops@todogreen.demo (senha 123456)."
-            : "Creates one account per role: admin@, gestor@, colaborador@, motorista@, hubops@todogreen.demo (password 123456)."}
-        </p>
-        {seedDemoMessage && (
-          <p className={seedDemoStatus === "error" ? "text-red-600 dark:text-red-400" : "text-green-600 dark:text-green-400"}>
-            {seedDemoMessage}
-          </p>
-        )}
-        <button
-          type="button"
-          onClick={handleSeedDemo}
-          disabled={seedDemoStatus === "loading"}
-          className="rounded-lg border border-primary bg-primary/10 px-4 py-2 text-sm font-medium text-primary hover:bg-primary/20 disabled:opacity-70"
-        >
-          {seedDemoStatus === "loading" ? (locale === "pt-BR" ? "Criando…" : "Creating…") : t.seedDemo}
-        </button>
       </section>
     </div>
   );

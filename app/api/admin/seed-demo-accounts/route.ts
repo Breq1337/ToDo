@@ -5,6 +5,7 @@
  */
 
 import { NextResponse } from "next/server";
+import { demoToolsDisabledResponse } from "@/lib/demoTools";
 import { getAuthUserWithRole } from "@/lib/supabase/auth-helpers";
 import { createServiceRoleClient } from "@/lib/supabase/server";
 import type { PortalRole } from "@/lib/supabase/auth-helpers";
@@ -21,6 +22,9 @@ const DEMO_ACCOUNTS: { email: string; role: PortalRole; hubId: string | null; di
 ];
 
 export async function POST(request: Request) {
+  const disabled = demoToolsDisabledResponse();
+  if (disabled) return disabled;
+
   const auth = await getAuthUserWithRole();
   if (!auth || auth.role !== "ADMIN") {
     return NextResponse.json({ error: "Acesso negado. Apenas ADMIN." }, { status: 403 });

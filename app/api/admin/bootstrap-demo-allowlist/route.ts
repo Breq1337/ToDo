@@ -6,6 +6,7 @@
  */
 
 import { NextResponse } from "next/server";
+import { demoToolsDisabledResponse } from "@/lib/demoTools";
 import { createServiceRoleClient } from "@/lib/supabase/server";
 import type { PortalRole } from "@/lib/supabase/auth-helpers";
 
@@ -19,6 +20,9 @@ const DEMO_ACCOUNTS: { email: string; role: PortalRole; hubId: string | null; di
 ];
 
 export async function POST(request: Request) {
+  const disabled = demoToolsDisabledResponse();
+  if (disabled) return disabled;
+
   const db = createServiceRoleClient();
   if (!db) {
     return NextResponse.json({ error: "Supabase não configurado." }, { status: 503 });

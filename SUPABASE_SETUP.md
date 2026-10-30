@@ -64,9 +64,11 @@ As chaves novas do Supabase (`sb_publishable_…` / `sb_secret_…`) funcionam n
 
 ---
 
-## 5. Contas demo (@todogreen.demo)
+## 5. Contas demo (@todogreen.demo) — só desenvolvimento
 
-Com um admin logado, acesse **Portal → Painel Admin** e clique em **Criar contas demo**. Isso cria as contas (admin, gestor, rh, colaborador, motorista, hubops) com senha `123456`.
+> As rotas de seed e demo respondem 404 sem `ENABLE_DEMO_TOOLS=true`. Nunca ligue essa flag em produção. O botão do Painel Admin foi removido: chame as rotas diretamente.
+
+Com `ENABLE_DEMO_TOOLS=true` e um admin logado, chame `POST /api/admin/seed-demo-accounts`. Isso cria uma conta por papel (admin, gestor, rh, colaborador, motorista, hubops) com a senha fixa definida na rota. Essa senha é pública: nunca use essas contas fora do ambiente local.
 
 Se você criou os usuários manualmente no Supabase e não consegue entrar:
 
@@ -78,6 +80,20 @@ Se você criou os usuários manualmente no Supabase e não consegue entrar:
      -H "Content-Type: application/json" \
      -d '{"secret":"minha-chave-secreta-123"}'
    ```
+
+### Antes de abrir o portal em produção
+
+A senha demo já foi exibida publicamente na tela de login. Remover a tela não apaga contas que já existam. No SQL Editor do Supabase, confira:
+
+```sql
+select email, active, role_default from allowlist
+where email like '%@todogreen.demo' or email like '%@example.com'
+   or email in ('admin@todogreen.com.br', 'manager@todogreen.com.br', 'employee@todogreen.com.br', 'driver@todogreen.com.br', 'hubops@todogreen.com.br');
+```
+
+Para cada linha encontrada, marque `active = false` e apague o usuário correspondente em **Authentication → Users**.
+
+Confira também em **Authentication → Providers → Email** que **Confirm email** segue ligado: sem isso, qualquer pessoa poderia criar uma conta com um e-mail da allowlist.
 
 ---
 
@@ -101,4 +117,4 @@ Nenhum arquivo de credenciais (JSON) é necessário. Depois de salvar, faça um 
 | 3 | Ativar Email (e Google) em Authentication → Providers |
 | 4 | Definir variáveis no .env.local ou painel |
 | 5 | Chamar `POST /api/admin/bootstrap` para o primeiro admin |
-| 6 | Fazer login e usar "Criar contas demo" no Painel Admin |
+| 6 | Fazer login como admin e criar os usuários reais no Painel Admin |

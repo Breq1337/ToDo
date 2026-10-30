@@ -4,14 +4,12 @@ import { useEffect, useState } from "react";
 import { motion } from "motion/react";
 import { useLocale } from "@/components/providers/LocaleProvider";
 import { getPortalContent } from "@/content/i18n";
-import { getIdToken } from "@/lib/authClient";
 import { Trophy } from "lucide-react";
 
 interface RankingEntry {
   position: number;
   uid: string;
   displayName: string;
-  email: string;
   points: number;
 }
 
@@ -23,40 +21,25 @@ export function RankingContent() {
 
   const [list, setList] = useState<RankingEntry[]>([]);
   const [loading, setLoading] = useState(true);
-  const [adding, setAdding] = useState(false);
 
-  const fetchRanking = async () => {
-    const res = await fetch("/api/ranking");
-    if (res.ok) {
-      const data = await res.json();
-      setList(data.ranking ?? []);
-    }
-  };
+  const [loadFailed, setLoadFailed] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      await fetchRanking();
-      if (!cancelled) setLoading(false);
+      try {
+        const res = await fetch("/api/ranking");
+        if (!res.ok) throw new Error(`ranking ${res.status}`);
+        const data = await res.json();
+        if (!cancelled) setList(data.ranking ?? []);
+      } catch {
+        if (!cancelled) setLoadFailed(true);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
     })();
     return () => { cancelled = true; };
   }, []);
-
-  const handleAddPoints = async () => {
-    setAdding(true);
-    try {
-      const token = await getIdToken(true);
-      if (!token) return;
-      const res = await fetch("/api/ranking", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ add: 10 }),
-      });
-      if (res.ok) await fetchRanking();
-    } finally {
-      setAdding(false);
-    }
-  };
 
   if (loading) {
     return (
@@ -78,18 +61,12 @@ export function RankingContent() {
       </motion.h1>
       <p className="mt-1 text-sm text-muted-foreground">{tRank.subtitle}</p>
 
-      <div className="mt-3">
-        <button
-          type="button"
-          onClick={handleAddPoints}
-          disabled={adding}
-          className="rounded-lg border border-border bg-surface2/50 px-3 py-1.5 text-sm font-medium text-foreground hover:bg-surface2 disabled:opacity-70"
-        >
-          {adding ? tCommon.loading : tRank.addPoints}
-        </button>
-      </div>
 
-      {list.length === 0 ? (
+      {loadFailed ? (
+        <p role="alert" className="mt-6 rounded-2xl border border-border bg-surface2/40 p-6 text-sm text-foreground">
+          {tRank.loadError}
+        </p>
+      ) : list.length === 0 ? (
         <div className="mt-6 flex flex-col items-center justify-center rounded-2xl border border-border bg-surface2/40 py-12 text-center">
           <Trophy className="h-10 w-10 text-muted-foreground/60" />
           <p className="mt-3 text-muted-foreground">{tRank.empty}</p>
@@ -109,7 +86,7 @@ export function RankingContent() {
                 <tr key={row.uid} className="border-b border-border/70 hover:bg-surface2/30">
                   <td className="px-3 py-2 text-muted-foreground">{row.position}</td>
                   <td className="px-3 py-2 text-foreground">
-                    {row.displayName || row.email || row.uid}
+                    {row.displayName || "—"}
                   </td>
                   <td className="px-3 py-2 text-right font-medium text-foreground">{row.points}</td>
                 </tr>

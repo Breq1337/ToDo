@@ -4,6 +4,7 @@
  */
 
 import { NextResponse } from "next/server";
+import { demoToolsDisabledResponse } from "@/lib/demoTools";
 import { createServiceRoleClient } from "@/lib/supabase/server";
 import type { PortalRole } from "@/lib/supabase/auth-helpers";
 
@@ -25,6 +26,9 @@ function checkSeedSecret(request: Request): boolean {
 }
 
 export async function POST(request: Request) {
+  const disabled = demoToolsDisabledResponse();
+  if (disabled) return disabled;
+
   if (!process.env.SEED_SECRET?.trim()) {
     return NextResponse.json(
       { error: "Seed não configurado. Defina SEED_SECRET." },

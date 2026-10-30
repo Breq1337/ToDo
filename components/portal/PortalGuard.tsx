@@ -6,11 +6,15 @@ import { PortalAuthSkeleton } from "./PortalAuthSkeleton";
 import { AuthRoleContext } from "./AuthRoleContext";
 import { PortalFirstLoginsTutorial } from "./PortalFirstLoginsTutorial";
 import { useAuthRole } from "@/hooks/useAuthRole";
+import { useLocale } from "@/components/providers/LocaleProvider";
+import { getPortalContent } from "@/content/i18n";
+import { logout } from "@/lib/authClient";
 
 export function PortalGuard({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-  const { user, role, hubId, loading, error, refreshRole } = useAuthRole();
+  const { locale } = useLocale();
+  const { user, role, hubId, loading, error, refreshRole, retry } = useAuthRole();
 
   const isLoginPage = pathname === "/portal/login";
 
@@ -19,9 +23,28 @@ export function PortalGuard({ children }: { children: React.ReactNode }) {
   }
 
   if (error && !isLoginPage) {
+    const portal = getPortalContent(locale);
     return (
-      <div className="flex min-h-screen items-center justify-center p-4 text-center text-sm text-muted-foreground">
-        {error}
+      <div className="flex min-h-screen items-center justify-center p-4">
+        <div role="alert" className="w-full max-w-md rounded-2xl border border-border bg-surface2/50 p-6">
+          <p className="text-sm text-foreground">{portal.login.profileLoadError}</p>
+          <div className="mt-4 flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={retry}
+              className="rounded-lg border border-primary bg-primary/10 px-4 py-2 text-sm font-medium text-primary transition-colors hover:bg-primary/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            >
+              {portal.login.tryAgain}
+            </button>
+            <button
+              type="button"
+              onClick={() => void logout()}
+              className="rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-surface2 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            >
+              {portal.nav.logout}
+            </button>
+          </div>
+        </div>
       </div>
     );
   }

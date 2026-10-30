@@ -9,6 +9,7 @@ import {
   loginWithEmailPassword,
   getClaims,
   getAuthErrorMessage,
+  logout,
   type PortalRole,
 } from "@/lib/authClient";
 import { isSupabaseConfigured } from "@/lib/supabase/client";
@@ -21,14 +22,19 @@ function redirectByRole(role: PortalRole): string {
 }
 
 async function doSignInAndSync(
-  t: { notAuthorized: string }
+  t: { notAuthorized: string; profileLoadError: string }
 ): Promise<{ ok: true; role: PortalRole } | { ok: false; message: string }> {
-  const res = await fetch("/api/auth/me", { credentials: "include" });
-  const data = await res.json();
-  if (!res.ok) return { ok: false, message: data.error || t.notAuthorized };
-  const claims = await getClaims();
-  const role = (data.role as PortalRole) ?? claims?.role ?? "EMPLOYEE";
-  return { ok: true, role };
+  let claims;
+  try {
+    claims = await getClaims();
+  } catch {
+    return { ok: false, message: t.profileLoadError };
+  }
+  if (!claims) {
+    await logout();
+    return { ok: false, message: t.notAuthorized };
+  }
+  return { ok: true, role: claims.role };
 }
 
 export function LoginCard() {
@@ -101,20 +107,10 @@ export function LoginCard() {
     <div className="flex flex-col gap-4">
       <p className="text-sm text-muted-foreground">{t.accessRules}</p>
       {message && (
-        <div className="space-y-1">
-          <p className="flex items-center gap-2 text-sm text-red-600 dark:text-red-400" role="alert">
-            <AlertCircle className="h-4 w-4 shrink-0" />
-            {message}
-          </p>
-          {email.trim().toLowerCase().endsWith("@todogreen.com.br") && (
-            <p className="text-sm text-muted-foreground">
-              {t.maybeYouMeantDemo.replace(
-                "{email}",
-                email.trim().toLowerCase().replace("@todogreen.com.br", "@todogreen.demo")
-              )}
-            </p>
-          )}
-        </div>
+        <p className="flex items-center gap-2 text-sm text-red-600 dark:text-red-400" role="alert">
+          <AlertCircle className="h-4 w-4 shrink-0" />
+          {message}
+        </p>
       )}
 
       <form onSubmit={handleEmailSignIn} className="flex flex-col gap-3">
@@ -127,7 +123,7 @@ export function LoginCard() {
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="ex: admin@todogreen.demo"
+            placeholder="nome@todogreen.com.br"
             autoComplete="email"
             disabled={status === "signing_in" || status === "syncing"}
             className="w-full rounded-lg border border-input bg-background px-4 py-3 text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-70"
