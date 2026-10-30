@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { motion } from "motion/react";
 import {
   LayoutDashboard,
@@ -51,7 +51,6 @@ export function PortalShell({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const router = useRouter();
   const { locale, setLocale } = useLocale();
   const { theme, setTheme } = useTheme();
   const t = getPortalContent(locale).nav;
@@ -72,10 +71,8 @@ export function PortalShell({
     return canAccess(role, item.routeGroup);
   });
 
-  const handleLogout = async () => {
-    await logout();
-    router.push("/portal/login");
-    router.refresh();
+  const handleLogout = () => {
+    void logout();
   };
 
   return (

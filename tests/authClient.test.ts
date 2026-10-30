@@ -58,6 +58,23 @@ describe("logout", () => {
   });
 });
 
+describe("logout deadline", () => {
+  it("stops waiting for a stalled signOut", async () => {
+    vi.useFakeTimers();
+    signOut.mockReturnValue(new Promise(() => {}));
+    const assign = vi.fn();
+    vi.stubGlobal("window", { location: { assign } });
+    vi.stubGlobal("document", { cookie: "" });
+
+    const done = logout("local");
+    await vi.advanceTimersByTimeAsync(5_000);
+    await done;
+
+    expect(assign).toHaveBeenCalledWith("/portal/login");
+    vi.useRealTimers();
+  });
+});
+
 describe("getClaims", () => {
   it("returns claims for an allowed user", async () => {
     vi.stubGlobal("fetch", vi.fn(async () => ({ ok: true, status: 200, json: async () => ({ role: "ADMIN", hubId: null }) })));

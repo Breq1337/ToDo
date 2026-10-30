@@ -85,6 +85,7 @@ export function useAuthRole(): AuthRoleState & { refreshRole: () => Promise<void
       setUser({ email, displayName });
 
       if (currentUserId.current !== session.user.id) {
+        latestRequest.current += 1;
         currentUserId.current = session.user.id;
         claimsLoaded.current = false;
         setUserId(session.user.id);

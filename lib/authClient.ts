@@ -13,6 +13,7 @@ export interface UserClaims {
 }
 
 const CLAIMS_TIMEOUT_MS = 10_000;
+const LOGOUT_TIMEOUT_MS = 5_000;
 
 export class SessionExpiredError extends Error {}
 
@@ -63,7 +64,13 @@ export async function loginWithEmailPassword(
  */
 export async function logout(scope?: "local"): Promise<void> {
   try {
-    const { error } = await createClient().auth.signOut(scope ? { scope } : undefined);
+    const deadline = new Promise<{ error: Error }>((resolve) =>
+      setTimeout(() => resolve({ error: new Error("signOut timed out") }), LOGOUT_TIMEOUT_MS)
+    );
+    const { error } = await Promise.race([
+      createClient().auth.signOut(scope ? { scope } : undefined),
+      deadline,
+    ]);
     if (!error) return;
   } catch {
     // Handled below, same as a reported error.

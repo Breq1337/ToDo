@@ -226,6 +226,33 @@ describe("useAuthRole", () => {
     await waitFor(() => expect(result.current.error).toBe("expired"));
   });
 
+  it("does not apply the previous user's response to the next user", async () => {
+    mockMe(true);
+    const { result } = renderHook(() => useAuthRole());
+
+    await act(async () => {
+      await emitHoldingLock("SIGNED_IN");
+    });
+    await waitFor(() => expect(result.current.role).toBe("ADMIN"));
+
+    let finishOlder: (value: unknown) => void = () => {};
+    vi.stubGlobal("fetch", vi.fn(() => new Promise((resolve) => { finishOlder = resolve; })));
+    let older: Promise<void> = Promise.resolve();
+    await act(async () => {
+      older = result.current.refreshRole();
+    });
+
+    mockMe(false);
+    const nextSession = { ...session, user: { ...session.user, id: "u2" } };
+    await act(async () => {
+      await listener("SIGNED_IN", nextSession);
+      finishOlder({ ok: true, status: 200, json: async () => ({ role: "ADMIN", hubId: null }) });
+      await older;
+    });
+
+    await waitFor(() => expect(result.current.error).toBe("unavailable"));
+  });
+
   it("ignores an older response that arrives after a newer one", async () => {
     mockMe(true);
     const { result } = renderHook(() => useAuthRole());
